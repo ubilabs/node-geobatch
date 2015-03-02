@@ -1,0 +1,33 @@
+{
+  "name": "node-geobatch",
+  "description": "Batch geocode addresses from multiple sources.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Robert Katzki",
+    "email": "katzki@ubilabs.net",
+    "url": "http://ubilabs.net/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ubilabs/node-geobatch"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "prepublish": "npm run lint",
+    "pretest": "npm run lint",
+    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
+    "posttest": "./node_modules/.bin/istanbul check-coverage && rm -rf coverage",
+    "lint": "./node_modules/.bin/eslint ."
+  },
+  "dependencies": {
+    "traceur": "0.0.85",
+    "traceur-runner": "^1.0.2"
+  },
+  "devDependencies": {
+    "eslint": "^0.15.1",
+    "istanbul": "^0.3.6",
+    "mocha": "^2.1.0",
+    "should": "^5.0.1"
+  }
+}

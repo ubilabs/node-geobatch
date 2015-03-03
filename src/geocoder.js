@@ -22,7 +22,14 @@ const Geocoder = function(options) {
 Geocoder.prototype.geocodeAddress = function(address) {
   address = address.replace('\'', '');
 
+  const cachedAddress = this.cache.get(address);
+
   return new Promise((resolve) => {
+    if (cachedAddress) {
+      resolve(cachedAddress);
+      return;
+    }
+
     this.googlemaps.geocode(address, (error, response) => {
       const location = response.results[0].geometry.location;
 

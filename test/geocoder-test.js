@@ -1,11 +1,22 @@
-/* eslint-disable no-unused-expressions */
+/* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
 require('traceur-runner');
 
 const should = require('should'),
-  Cache = require('../src/cache.js'),
+  fs = require('fs'),
+  flatfile = require('flat-file-db'),
   Geocoder = require('../src/geocoder.js');
 
 describe('Testing geocoder', function() {
+  afterEach(function(done) {
+    fs.exists('geocache.db', function(exists) {
+      if (exists) {
+        fs.unlinkSync('geocache.db');
+      }
+
+      done();
+    });
+  });
+
   it('should create a new instance when called without params', function() {
     const geocoder = new Geocoder();
 
@@ -32,14 +43,36 @@ describe('Testing geocoder', function() {
 
   it('should cache a geocode', function(done) {
     const geocoder = new Geocoder(),
-      cache = new Cache(),
-      address = 'Juliusstraße 25, 22769 Hamburg',
+      address = 'Hamburg',
       geocode = geocoder.geocodeAddress(address);
 
-    geocode.then(function(location) {
-      should.exist(cache.get(address));
-      should.deepEqual(cache.get(address), location);
-      done();
+    geocode.then(function() {
+      const cacheFileContent = fs.readFileSync('geocache.db', {
+        encoding: 'utf8'
+      });
+
+      setTimeout(() => {
+        should(cacheFileContent).match(/"Hamburg"/);
+        done();
+      }, 200);
+    });
+  });
+
+  it('should use the cached version if it exists', function(done) {
+    const db = flatfile.sync('geocache.db'),
+      dummyAddress = 'Dummy',
+      dummyLocation = {
+        lat: 1,
+        lng: 2
+      };
+
+    db.put(dummyAddress, dummyLocation, () => {
+      const geocoder = new Geocoder();
+
+      geocoder.geocodeAddress(dummyAddress).then(function(location) {
+        should.deepEqual(dummyLocation, location);
+        done();
+      });
     });
   });
 });

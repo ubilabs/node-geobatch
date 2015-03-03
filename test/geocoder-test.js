@@ -71,6 +71,7 @@ describe('Testing geocoder', function() {
 
       geocoder.geocodeAddress(dummyAddress).then(function(location) {
         should.deepEqual(dummyLocation, location);
+        db.close();
         done();
       });
     });

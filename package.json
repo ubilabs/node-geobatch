@@ -16,8 +16,7 @@
     "start": "node index.js",
     "prepublish": "npm run lint",
     "pretest": "npm run lint",
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test",
-    "posttest": "./node_modules/.bin/istanbul check-coverage && rm -rf coverage",
+    "test": "./node_modules/.bin/_mocha test",
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
@@ -27,7 +26,6 @@
   },
   "devDependencies": {
     "eslint": "^0.15.1",
-    "istanbul": "^0.3.6",
     "mocha": "^2.1.0",
     "should": "^5.0.1"
   }

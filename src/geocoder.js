@@ -1,3 +1,7 @@
+/* eslint-disable one-var */
+
+const Cache = require('./cache');
+
 /**
  * Geocoder instance
  * @type {Function}
@@ -7,6 +11,7 @@ const Geocoder = function(options) {
   options = options || {};
 
   this.googlemaps = require('googlemaps');
+  this.cache = new Cache(options.cacheFile);
 };
 
 /**
@@ -19,7 +24,11 @@ Geocoder.prototype.geocodeAddress = function(address) {
 
   return new Promise((resolve) => {
     this.googlemaps.geocode(address, (error, response) => {
-      resolve(response.results[0].geometry.location);
+      const location = response.results[0].geometry.location;
+
+      this.cache.add(address, location);
+      resolve(location);
+      return;
     });
   });
 };

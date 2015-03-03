@@ -1,6 +1,6 @@
 /* eslint-disable one-var */
 
-const Cache = require('./cache');
+const Geocoder = require('./geocoder');
 
 /**
  * GeoBatch instance
@@ -10,9 +10,9 @@ const Cache = require('./cache');
 const GeoBatch = function(options) {
   options = options || {};
 
-  const cacheFile = options.cacheFile || 'geocache.db';
-
-  this.cache = new Cache(cacheFile);
+  this.geocoder = new Geocoder({
+    cacheFile: options.cacheFile || 'geocache.db'
+  });
 };
 
 module.exports = GeoBatch;

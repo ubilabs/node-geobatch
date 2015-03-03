@@ -21,6 +21,7 @@
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
+    "flat-file-db": "^0.1.4",
     "traceur": "0.0.85",
     "traceur-runner": "^1.0.2"
   },

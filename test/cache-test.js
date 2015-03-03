@@ -50,4 +50,10 @@ describe('Testing cache', function() {
       done();
     });
   });
+
+  it('should return nothing when entry not exists', function() {
+    const cache = new Cache();
+
+    should.not.exist(cache.get('MyLocation'));
+  });
 });

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "flat-file-db": "^0.1.4",
+    "googlemaps": "^0.1.20",
     "traceur": "0.0.85",
     "traceur-runner": "^1.0.2"
   },

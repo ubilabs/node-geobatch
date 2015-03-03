@@ -40,4 +40,14 @@ describe('Testing cache', function() {
       done();
     });
   });
+
+  it('should be possible to add and retrieve new entries', function(done) {
+    const cache = new Cache();
+
+    cache.add('MyLocation', {lat: 50, lng: 10}, function() {
+      should.exist(cache.get('MyLocation'));
+      should.deepEqual(cache.get('MyLocation'), {lat: 50, lng: 10});
+      done();
+    });
+  });
 });

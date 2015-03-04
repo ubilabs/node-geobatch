@@ -48,6 +48,10 @@ Geocoder.prototype.geocodeAddress = function(address) {
         return reject(new Error('Wrong clientId or privateKey'));
       }
 
+      if (response.status === 'OVER_QUERY_LIMIT') {
+        return reject(new Error('Over query limit'));
+      }
+
       if (isEmpty(response.results)) {
         return reject(new Error('No results found'));
       }

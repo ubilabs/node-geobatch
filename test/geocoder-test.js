@@ -123,4 +123,15 @@ describe('Testing geocoder', function() {
       });
     });
   });
+
+  it('should return an error when no result is found', function(done) {
+    const geocoder = new Geocoder(),
+      address = 'My dummy location that does not exist!';
+
+    geocoder.geocodeAddress(address).catch((error) => {
+      should(error).be.an.Error;
+      should(error.message).equal('No results found');
+      done();
+    });
+  });
 });

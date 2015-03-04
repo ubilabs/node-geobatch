@@ -1,6 +1,7 @@
 /* eslint-disable one-var */
 
-const Cache = require('./cache');
+const Cache = require('./cache'),
+  isEmpty = require('amp-is-empty');
 
 /**
  * Geocoder instance
@@ -45,6 +46,10 @@ Geocoder.prototype.geocodeAddress = function(address) {
     this.googlemaps.geocode(address, (error, response) => {
       if (error) {
         return reject(new Error('Wrong clientId or privateKey'));
+      }
+
+      if (isEmpty(response.results)) {
+        return reject(new Error('No results found'));
       }
 
       const location = response.results[0].geometry.location;

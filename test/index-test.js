@@ -51,4 +51,10 @@ describe('Testing index', function() {
     }).throw('Missing privateKey');
     /* eslint-enable no-unused-vars */
   });
+
+  it('should have a function that can geocode addresses', function() {
+    const geoBatch = new GeoBatch();
+
+    should(geoBatch.geocode).be.a.Function;
+  });
 });

@@ -17,4 +17,11 @@ const GeoBatch = function(options) {
   });
 };
 
+/**
+ * Geocode the passed in addresses
+ */
+GeoBatch.prototype.geocode = function() {
+
+};
+
 module.exports = GeoBatch;

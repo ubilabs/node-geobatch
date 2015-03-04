@@ -30,19 +30,23 @@ const Geocoder = function(options) {
 /**
  * Geocode a single address
  * @param {String} address The address to geocode
- * @return {Promise} A new promise
+ * @return {Promise} The promise
  */
 Geocoder.prototype.geocodeAddress = function(address) {
   address = address.replace('\'', '');
 
   const cachedAddress = this.cache.get(address);
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (cachedAddress) {
       return resolve(cachedAddress);
     }
 
     this.googlemaps.geocode(address, (error, response) => {
+      if (error) {
+        return reject('Wrong clientId or privateKey');
+      }
+
       const location = response.results[0].geometry.location;
 
       this.cache.add(address, location);

@@ -2,9 +2,14 @@
 require('traceur-runner');
 
 const should = require('should'),
+  promised = require('should-promised'),
   fs = require('fs'),
   flatfile = require('flat-file-db'),
   Geocoder = require('../src/geocoder.js');
+
+/* eslint-disable no-console */
+console.log(promised);
+/* eslint-enable no-console */
 
 describe('Testing geocoder', function() {
   afterEach(function(done) {
@@ -48,14 +53,28 @@ describe('Testing geocoder', function() {
     }).throw('Missing clientId');
   });
 
+  it('should return a promise from the geocodeAddress function', function() {
+    const geocoder = new Geocoder();
+
+    geocoder.geocodeAddress('Hamburg').should.be.a.Promise;
+  });
+
+  it('should reject when geocoding with false id or key', function() {
+    const geocoder = new Geocoder({
+        clientId: 'dummy',
+        privateKey: 'dummy'
+      }),
+      address = 'Juliusstraße 25, 22769 Hamburg';
+
+    geocoder.geocodeAddress(address)
+      .should.be.rejectedWith('Wrong clientId or privateKey');
+  });
+
   it('should geocode an address', function(done) {
     const geocoder = new Geocoder(),
-      address = 'Juliusstraße 25, 22769 Hamburg',
-      geocode = geocoder.geocodeAddress(address);
+      address = 'Juliusstraße 25, 22769 Hamburg';
 
-    should(geocode).be.fulfilled;
-
-    geocode.then(function(location) {
+    geocoder.geocodeAddress(address).then(function(location) {
       should(location).be.an.object;
       should(location).have.keys('lat', 'lng');
       should(location.lat).be.above(53);

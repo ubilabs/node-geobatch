@@ -59,15 +59,18 @@ describe('Testing geocoder', function() {
     geocoder.geocodeAddress('Hamburg').should.be.a.Promise;
   });
 
-  it('should reject when geocoding with false id or key', function() {
+  it('should reject when geocoding with false id or key', function(done) {
     const geocoder = new Geocoder({
         clientId: 'dummy',
         privateKey: 'dummy'
       }),
       address = 'Juliusstraße 25, 22769 Hamburg';
 
-    geocoder.geocodeAddress(address)
-      .should.be.rejectedWith('Wrong clientId or privateKey');
+    geocoder.geocodeAddress(address).catch((error) => {
+      should(error).be.an.Error;
+      should(error.message).equal('Wrong clientId or privateKey');
+      done();
+    });
   });
 
   it('should geocode an address', function(done) {

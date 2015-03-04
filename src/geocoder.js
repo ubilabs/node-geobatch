@@ -44,7 +44,7 @@ Geocoder.prototype.geocodeAddress = function(address) {
 
     this.googlemaps.geocode(address, (error, response) => {
       if (error) {
-        return reject('Wrong clientId or privateKey');
+        return reject(new Error('Wrong clientId or privateKey'));
       }
 
       const location = response.results[0].geometry.location;

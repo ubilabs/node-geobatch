@@ -39,15 +39,14 @@ Geocoder.prototype.geocodeAddress = function(address) {
 
   return new Promise((resolve) => {
     if (cachedAddress) {
-      resolve(cachedAddress);
-      return;
+      return resolve(cachedAddress);
     }
 
     this.googlemaps.geocode(address, (error, response) => {
       const location = response.results[0].geometry.location;
 
       this.cache.add(address, location);
-      resolve(location);
+      return resolve(location);
     });
   });
 };

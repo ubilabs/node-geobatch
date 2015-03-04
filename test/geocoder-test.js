@@ -64,7 +64,7 @@ describe('Testing geocoder', function() {
         clientId: 'dummy',
         privateKey: 'dummy'
       }),
-      address = 'Juliusstraße 25, 22769 Hamburg';
+      address = 'Hamburg';
 
     geocoder.geocodeAddress(address).catch((error) => {
       should(error).be.an.Error;
@@ -75,7 +75,7 @@ describe('Testing geocoder', function() {
 
   it('should geocode an address', function(done) {
     const geocoder = new Geocoder(),
-      address = 'Juliusstraße 25, 22769 Hamburg';
+      address = 'Hamburg';
 
     geocoder.geocodeAddress(address).then(function(location) {
       should(location).be.an.object;

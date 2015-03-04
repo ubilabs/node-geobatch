@@ -11,7 +11,9 @@ const GeoBatch = function(options) {
   options = options || {};
 
   this.geocoder = new Geocoder({
-    cacheFile: options.cacheFile || 'geocache.db'
+    cacheFile: options.cacheFile || 'geocache.db',
+    clientId: options.clientId,
+    privateKey: options.privateKey
   });
 };
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 require('traceur-runner');
 
-var should = require('should'),
+const should = require('should'),
   fs = require('fs'),
   GeoBatch = require('../src/index.js');
 
@@ -17,13 +17,13 @@ describe('Testing index', function() {
   });
 
   it('should create a new instance when called without params', function() {
-    var geoBatch = new GeoBatch();
+    const geoBatch = new GeoBatch();
 
     should.exist(geoBatch);
   });
 
   it('should accept a cachefile name', function(done) {
-    var geoBatch = new GeoBatch({
+    const geoBatch = new GeoBatch({
       cacheFile: 'myPersonalGeocache.db'
     });
 
@@ -34,5 +34,21 @@ describe('Testing index', function() {
       fs.unlinkSync('myPersonalGeocache.db');
       done();
     });
+  });
+
+  it('should accept a clientId and a privateKey', function() {
+    /* eslint-disable no-unused-vars */
+    should(function() {
+      const geoBatch = new GeoBatch({
+        privateKey: 'dummy'
+      });
+    }).throw('Missing clientId');
+
+    should(function() {
+      const geoBatch = new GeoBatch({
+        clientId: 'dummy'
+      });
+    }).throw('Missing privateKey');
+    /* eslint-enable no-unused-vars */
   });
 });

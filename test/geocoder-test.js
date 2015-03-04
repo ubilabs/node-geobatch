@@ -23,6 +23,22 @@ describe('Testing geocoder', function() {
     should.exist(geocoder);
   });
 
+  it('should throw an error when there is only the client id', function() {
+    should(function() {
+      this.geocoder = new Geocoder({
+        clientId: 'dummy'
+      });
+    }).throw('Missing privateKey');
+  });
+
+  it('should throw an error when there is only the private key', function() {
+    should(function() {
+      this.geocoder = new Geocoder({
+        privateKey: 'dummy'
+      });
+    }).throw('Missing clientId');
+  });
+
   it('should geocode an address', function(done) {
     const geocoder = new Geocoder(),
       address = 'Juliusstraße 25, 22769 Hamburg',

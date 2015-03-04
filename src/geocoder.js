@@ -48,7 +48,6 @@ Geocoder.prototype.geocodeAddress = function(address) {
 
       this.cache.add(address, location);
       resolve(location);
-      return;
     });
   });
 };

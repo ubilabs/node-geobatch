@@ -9,6 +9,8 @@ const Cache = require('./cache');
  */
 const Geocoder = function(options) {
   options = options || {};
+  options.clientId = options.clientId || null;
+  options.privateKey = options.privateKey || null;
 
   if (options.clientId && !options.privateKey) {
     throw new Error('Missing privateKey');
@@ -21,10 +23,8 @@ const Geocoder = function(options) {
   this.cache = new Cache(options.cacheFile);
   this.googlemaps = require('googlemaps');
 
-  if (options.clientId && options.privateKey) {
-    this.googlemaps.config('google-client-id', options.clientId);
-    this.googlemaps.config('google-private-key', options.privateKey);
-  }
+  this.googlemaps.config('google-client-id', options.clientId);
+  this.googlemaps.config('google-private-key', options.privateKey);
 };
 
 /**

@@ -23,6 +23,15 @@ describe('Testing geocoder', function() {
     should.exist(geocoder);
   });
 
+  it('should accept a client ID and a private key', function() {
+    const geocoder = new Geocoder({
+      clientId: 'dummy',
+      privateKey: 'dummy'
+    });
+
+    should.exist(geocoder);
+  });
+
   it('should throw an error when there is only the client id', function() {
     should(function() {
       this.geocoder = new Geocoder({

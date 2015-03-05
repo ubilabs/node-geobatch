@@ -52,9 +52,19 @@ describe('Testing index', function() {
     /* eslint-enable no-unused-vars */
   });
 
-  it('should have a function that can geocode addresses', function() {
-    const geoBatch = new GeoBatch();
+  it('should have a function that streams back geocoded addresses',
+    function(done) {
+      const geoBatch = new GeoBatch(),
+        geocodeStream = geoBatch.geocode(['Hamburg', 'Berlin']);
 
-    should(geoBatch.geocode).be.a.Function;
-  });
+      should(geoBatch.geocode).be.a.Function;
+
+      geocodeStream.on('data', function() {
+
+      });
+      geocodeStream.on('end', function() {
+        done();
+      });
+    }
+  );
 });

@@ -1,7 +1,6 @@
 /* eslint-disable one-var */
 
 const Readable = require('stream').Readable,
-  util = require('util'),
   Geocoder = require('./geocoder');
 
 /**
@@ -24,32 +23,12 @@ const GeoBatch = function(options) {
  * @param {Array} addresses The addresses to geocode
  * @return {Function} The stream
  */
-GeoBatch.prototype.geocode = function(addresses) {
-  return new Readstream(addresses);
-};
+GeoBatch.prototype.geocode = function() {
+  const readStream = new Readable();
 
-/**
- * A streaming object for the geocode
- * @param {Array} addresses The addresses to geocode
- */
-function Readstream(addresses) {
-  Readable.call(this, {objectMode: true});
-  this.addresses = addresses;
-  this.curIndex = 0;
-}
-util.inherits(Readstream, Readable);
+  readStream.push(null);
 
-/**
- * The _read function for the stream.
- */
-/* eslint-disable no-underscore-dangle */
-Readstream.prototype._read = function() {
-/* eslint-enable no-underscore-dangle */
-  if (this.curIndex === this.addresses.length) {
-    return this.push(null);
-  }
-
-  this.push(this.addresses[this.curIndex++]);
+  return readStream;
 };
 
 module.exports = GeoBatch;

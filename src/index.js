@@ -69,12 +69,15 @@ function GeocodeStream(geocoder) {
 }
 util.inherits(GeocodeStream, stream.Transform);
 
+/* eslint-disable no-underscore-dangle */
 /**
  * The _transform function for the stream.
+ * @param {String}   address The address to geocode
+ * @param {String}   enc The encryption
+ * @param {Function} done The done callback function
  */
-/* eslint-disable no-underscore-dangle */
 GeocodeStream.prototype._transform = function(address, enc, done) {
-/* eslint-enable no-underscore-dangle */
+  /* eslint-enable no-underscore-dangle */
   this.geocoder.geocodeAddress(address)
     .then((location) => {
       this.push({

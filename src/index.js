@@ -19,54 +19,69 @@ const GeoBatch = function(options) {
   });
 };
 
+GeoBatch.prototype.createStream = function(addresses = []) {
+  return new AddressesStream(addresses);
+};
+
+/**
+ * A streaming object for the geocode
+ * @param {Array} addresses The addresses
+ */
+function AddressesStream(addresses) {
+  stream.Readable.call(this, {objectMode: true});
+
+  this.addresses = addresses;
+  this.curIndex = 0;
+}
+util.inherits(AddressesStream, stream.Readable);
+
+/**
+ * The _read function for the addresses stream.
+ */
+/* eslint-disable no-underscore-dangle */
+AddressesStream.prototype._read = function() {
+/* eslint-enable no-underscore-dangle */
+  if (this.curIndex === this.addresses.length) {
+    return this.push(null);
+  }
+
+  this.push(this.addresses[this.curIndex++]);
+};
+
 /**
  * Geocode the passed in addresses
  * @param {Array} addresses The addresses to geocode
  * @return {Function} The stream
  */
-GeoBatch.prototype.geocode = function(addresses = []) {
-  return new GeocodeStream(this.geocoder, addresses);
+GeoBatch.prototype.geocode = function() {
+  return new GeocodeStream(this.geocoder);
 };
 
 /**
  * A streaming object for the geocode
  * @param {Object} geocoder The geocoder
- * @param {Array} addresses The addresses to geocode
  */
-function GeocodeStream(geocoder, addresses) {
-  stream.Readable.call(this, {objectMode: true});
+function GeocodeStream(geocoder) {
+  stream.Transform.call(this, {objectMode: true});
 
   this.geocoder = geocoder;
-  this.addresses = addresses;
-  this.addressCount = addresses.length;
-  this.geocodedAddresses = 0;
 }
-util.inherits(GeocodeStream, stream.Readable);
+util.inherits(GeocodeStream, stream.Transform);
 
 /**
- * The _read function for the stream.
+ * The _transform function for the stream.
  */
 /* eslint-disable no-underscore-dangle */
-GeocodeStream.prototype._read = function() {
+GeocodeStream.prototype._transform = function(address, enc, done) {
 /* eslint-enable no-underscore-dangle */
-  if (this.addressCount === 0) {
-    return this.push(null);
-  }
-
-  this.addresses.forEach((address) => {
-    this.geocoder.geocodeAddress(address)
-      .then((location) => {
-        this.push({
-          address: address,
-          location: location
-        });
-        this.geocodedAddresses++;
-
-        if (this.geocodedAddresses === this.addressCount) {
-          this.push(null);
-        }
+  this.geocoder.geocodeAddress(address)
+    .then((location) => {
+      this.push({
+        address: address,
+        location: location
       });
-  });
+      done();
+    });
 };
 
 module.exports = GeoBatch;

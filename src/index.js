@@ -56,7 +56,10 @@ GeocodeStream.prototype._read = function() {
   this.addresses.forEach((address) => {
     this.geocoder.geocodeAddress(address)
       .then((location) => {
-        this.push(location);
+        this.push({
+          address: address,
+          location: location
+        });
         this.geocodedAddresses++;
 
         if (this.geocodedAddresses === this.addressCount) {

@@ -75,6 +75,7 @@ describe('Testing index', function() {
 
       geocodeStream.on('data', function(data) {
         should(data).be.an.Object;
+        should(data).have.keys('address', 'location');
         geocodeResponses++;
       });
       geocodeStream.on('end', function() {

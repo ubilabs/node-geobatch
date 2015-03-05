@@ -91,4 +91,48 @@ describe('Testing index', function() {
         });
     }
   );
+
+  it('should handle multiple calls to geocode',
+    function(done) {
+      const geoBatch = new GeoBatch();
+
+      let finishedCalls = 0;
+
+      geoBatch.geocode(['Hamburg'])
+        .on('data', function(data) {
+          should(data.address).equal('Hamburg');
+        })
+        .on('end', function() {
+          finishedCalls++;
+
+          if (finishedCalls === 3) {
+            done();
+          }
+        });
+
+      geoBatch.geocode(['Munich'])
+        .on('data', function(data) {
+          should(data.address).equal('Munich');
+        })
+        .on('end', function() {
+          finishedCalls++;
+
+          if (finishedCalls === 3) {
+            done();
+          }
+        });
+
+      geoBatch.geocode(['Leipzig'])
+        .on('data', function(data) {
+          should(data.address).equal('Leipzig');
+        })
+        .on('end', function() {
+          finishedCalls++;
+
+          if (finishedCalls === 3) {
+            done();
+          }
+        });
+    }
+  );
 });

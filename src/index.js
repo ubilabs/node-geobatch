@@ -19,8 +19,18 @@ const GeoBatch = function(options) {
   });
 };
 
-GeoBatch.prototype.createStream = function(addresses = []) {
-  return new AddressesStream(addresses);
+/**
+ * Geocode the passed in addresses
+ * @param {Array} addresses The addresses to geocode
+ * @return {Function} The stream
+ */
+GeoBatch.prototype.geocode = function(addresses) {
+  const addressesStream = new AddressesStream(addresses),
+    geocodeStream = new GeocodeStream(this.geocoder);
+
+  addressesStream.pipe(geocodeStream);
+
+  return geocodeStream;
 };
 
 /**
@@ -46,15 +56,6 @@ AddressesStream.prototype._read = function() {
   }
 
   this.push(this.addresses[this.curIndex++]);
-};
-
-/**
- * Geocode the passed in addresses
- * @param {Array} addresses The addresses to geocode
- * @return {Function} The stream
- */
-GeoBatch.prototype.geocode = function() {
-  return new GeocodeStream(this.geocoder);
 };
 
 /**

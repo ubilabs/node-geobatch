@@ -52,33 +52,13 @@ describe('Testing index', function() {
     /* eslint-enable no-unused-vars */
   });
 
-  it('should have a createStream function that returns a stream from addresses',
-    function(done) {
-      const geoBatch = new GeoBatch(),
-        geocodeStream = geoBatch.createStream(['Hamburg', 'Berlin']);
-
-      let streamedAddresses = 0;
-
-      should(geoBatch.createStream).be.a.Function;
-
-      geocodeStream.on('data', function() {
-        streamedAddresses++;
-      });
-      geocodeStream.on('end', function() {
-        should(streamedAddresses).equal(2);
-        done();
-      });
-    }
-  );
-
   it('should have a geocode function that accepts and returns a stream',
     function(done) {
-      const geoBatch = new GeoBatch(),
-        addressesStream = geoBatch.createStream([]);
+      const geoBatch = new GeoBatch();
 
       should(geoBatch.geocode).be.a.Function;
 
-      addressesStream.pipe(geoBatch.geocode())
+      geoBatch.geocode([])
         .on('data', function() {})
         .on('end', function() {
           done();
@@ -88,8 +68,7 @@ describe('Testing index', function() {
 
   it('should geocode addresses',
     function(done) {
-      const geoBatch = new GeoBatch(),
-        addressesStream = geoBatch.createStream(['Hamburg', 'Berlin']);
+      const geoBatch = new GeoBatch();
 
       let geocodeResponses = 0,
         found = {
@@ -97,7 +76,7 @@ describe('Testing index', function() {
           Berlin: false
         };
 
-      addressesStream.pipe(geoBatch.geocode())
+      geoBatch.geocode(['Hamburg', 'Berlin'])
         .on('data', function(data) {
           should(data).be.an.Object;
           should(data).have.keys('address', 'location');

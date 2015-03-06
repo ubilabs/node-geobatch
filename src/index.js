@@ -62,23 +62,42 @@ GeocodeStream.prototype._transform = function(address, enc, done) {
 
   this.geocoder.geocodeAddress(address)
     .then((location) => {
-      this.stats.current++;
+      let result = this.getMetainfo(address);
 
-      const now = new Date(),
-        ratio = this.stats.current / this.stats.total;
+      result.location = location;
+      this.push(result);
+      done();
+    })
+    .catch((error) => {
+      let result = this.getMetainfo(address);
 
-      this.push({
-        address: address,
-        location: location,
-        total: this.stats.total,
-        current: this.stats.current,
-        pending: this.stats.total - this.stats.current,
-        percent: ratio * 100,
-        estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
-      });
-
+      result.error = error.message;
+      this.push(result);
       done();
     });
+};
+
+/**
+ * Get the result meta information
+ * @param {String} address The address
+ * @return {Object} The meta information
+ */
+GeocodeStream.prototype.getMetainfo = function(address) {
+  this.stats.current++;
+
+  const now = new Date(),
+    ratio = this.stats.current / this.stats.total;
+
+  return {
+    error: null,
+    address: address,
+    location: null,
+    total: this.stats.total,
+    current: this.stats.current,
+    pending: this.stats.total - this.stats.current,
+    percent: ratio * 100,
+    estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
+  };
 };
 
 module.exports = GeoBatch;

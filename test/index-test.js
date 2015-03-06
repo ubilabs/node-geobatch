@@ -83,6 +83,7 @@ describe('Testing index', function() {
           should(data.location).be.an.Object;
           should(data.location.lat).be.a.Number;
           should(data.location.lng).be.a.Number;
+          should(data.error).be.null;
           found[data.address] = true;
           geocodeResponses++;
         })
@@ -90,6 +91,21 @@ describe('Testing index', function() {
           should.equal(geocodeResponses, 2);
           should(found.Hamburg).be.true;
           should(found.Berlin).be.true;
+          done();
+        });
+    }
+  );
+
+  it('should return an error when geocoding of addresses fails',
+    function(done) {
+      const geoBatch = new GeoBatch();
+
+      geoBatch.geocode(['My dummy location that does not exist!'])
+        .on('data', function(data) {
+          should(data.error).be.a.String;
+          should(data.error).equal('No results found');
+        })
+        .on('end', function() {
           done();
         });
     }

@@ -79,7 +79,10 @@ describe('Testing index', function() {
       geoBatch.geocode(['Hamburg', 'Berlin'])
         .on('data', function(data) {
           should(data).be.an.Object;
-          should(data).have.keys('address', 'location');
+          should(data.address).be.a.String;
+          should(data.location).be.an.Object;
+          should(data.location.lat).be.a.Number;
+          should(data.location.lng).be.a.Number;
           found[data.address] = true;
           geocodeResponses++;
         })
@@ -87,6 +90,36 @@ describe('Testing index', function() {
           should.equal(geocodeResponses, 2);
           should(found.Hamburg).be.true;
           should(found.Berlin).be.true;
+          done();
+        });
+    }
+  );
+
+  it('should return some info about the geocoding process',
+    function(done) {
+      const geoBatch = new GeoBatch();
+
+      geoBatch.geocode(['Hamburg', 'Berlin'])
+        .on('data', function(data) {
+          should(data.pending).be.a.Number;
+          should(data.total).be.a.Number;
+          should(data.current).be.a.Number;
+          should(data.percent).be.a.Number;
+          should(data.estimatedDuration).be.a.Number;
+          should(data.total).equal(2);
+          should(data.estimatedDuration).not.equal(0);
+          if (data.address === 'Hamburg') {
+            should(data.pending).equal(1);
+            should(data.current).equal(1);
+            should(data.percent).equal(50);
+          }
+          if (data.address === 'Berlin') {
+            should(data.pending).equal(0);
+            should(data.current).equal(2);
+            should(data.percent).equal(100);
+          }
+        })
+        .on('end', function() {
           done();
         });
     }

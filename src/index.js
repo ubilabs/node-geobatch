@@ -29,6 +29,11 @@ GeoBatch.prototype.geocode = function(addresses) {
   const arrayStream = new ArrayStream(addresses),
     geocodeStream = new GeocodeStream(this.geocoder);
 
+  geocodeStream.stats = {
+    total: addresses.length,
+    current: 0,
+    startTime: new Date()
+  };
   arrayStream.pipe(geocodeStream);
 
   return geocodeStream;
@@ -54,12 +59,24 @@ util.inherits(GeocodeStream, stream.Transform);
  */
 GeocodeStream.prototype._transform = function(address, enc, done) {
   /* eslint-enable no-underscore-dangle */
+
   this.geocoder.geocodeAddress(address)
     .then((location) => {
+      this.stats.current++;
+
+      const now = new Date(),
+        ratio = this.stats.current / this.stats.total;
+
       this.push({
         address: address,
-        location: location
+        location: location,
+        total: this.stats.total,
+        current: this.stats.current,
+        pending: this.stats.total - this.stats.current,
+        percent: ratio * 100,
+        estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
       });
+
       done();
     });
 };

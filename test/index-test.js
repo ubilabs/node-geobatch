@@ -12,7 +12,7 @@ describe('Testing index', function() {
         fs.unlinkSync('geocache.db');
       }
 
-      done();
+      setTimeout(done, 500);
     });
   });
 

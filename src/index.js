@@ -91,7 +91,7 @@ GeocodeStream.prototype.getMetainfo = function(address) {
   return {
     error: null,
     address: address,
-    location: null,
+    location: {},
     total: this.stats.total,
     current: this.stats.current,
     pending: this.stats.total - this.stats.current,

@@ -65,6 +65,11 @@ To run the tests, run:
 npm test
 ```
 
+To make a release, run:
+
+```
+npm run release patch|minor|major
+```
 
 ## License (MIT)
 

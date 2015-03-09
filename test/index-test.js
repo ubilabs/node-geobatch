@@ -184,4 +184,26 @@ describe('Testing index', function() {
         });
     }
   );
+
+  it('should limit the geocoding calls to not run into API limits',
+    function(done) {
+      const geoBatch = new GeoBatch();
+
+      this.timeout(15000);
+
+      geoBatch.geocode([
+        'Hamburg', 'Berlin', 'Leipzig', 'Stuttgart', 'Munich', 'Cologne',
+        'Bremen', 'Rostock', 'Freiburg', 'Frankfurt', 'Dresden', 'Karlsruhe',
+        'Halle', 'Flensburg', 'Dortmund', 'Ulm', 'Kiel', 'Erlangen', 'Moskau',
+        'New York', 'Rio de Janeiro', 'Tokyo', 'Lima', 'Quito', 'Montevideo'
+      ])
+        .on('data', function(data) {
+          should(data.error).be.null;
+          should(data.location).be.an.Object;
+        })
+        .on('end', function() {
+          done();
+        });
+    }
+  );
 });

@@ -21,6 +21,12 @@ const Geocoder = function(options) {
     throw new Error('Missing clientId');
   }
 
+  this.timeBetweenRequests = options.clientId && options.privateKey ? 100 : 200;
+  this.maxRequests = 20;
+
+  this.lastGeocode = new Date();
+  this.currentRequests = 0;
+
   this.cache = new Cache(options.cacheFile);
   this.googlemaps = require('googlemaps');
 
@@ -43,24 +49,51 @@ Geocoder.prototype.geocodeAddress = function(address) {
       return resolve(cachedAddress);
     }
 
-    this.googlemaps.geocode(address, (error, response) => {
-      if (error) {
-        return reject(new Error('Wrong clientId or privateKey'));
-      }
+    this.startGeocode(address, resolve, reject);
+  });
+};
 
-      if (response.status === 'OVER_QUERY_LIMIT') {
-        return reject(new Error('Over query limit'));
-      }
+/**
+ * Start geocoding a single address
+ * @param {String} address The address to geocode
+ * @param {Function} resolve The Promise resolve function
+ * @param {Function} reject The Promise reject function
+ */
+Geocoder.prototype.startGeocode = function(address, resolve, reject) {
+  let now = new Date();
 
-      if (isEmpty(response.results)) {
-        return reject(new Error('No results found'));
-      }
+  if (
+    this.currentRequests >= this.maxRequests ||
+    now - this.lastGeocode <= this.timeBetweenRequests
+  ) {
+    setTimeout(() => {
+      this.startGeocode(address, resolve, reject);
+    }, this.timeBetweenRequests);
+    return;
+  }
 
-      const location = response.results[0].geometry.location;
+  this.currentRequests++;
+  this.lastGeocode = now;
 
-      this.cache.add(address, location);
-      return resolve(location);
-    });
+  this.googlemaps.geocode(address, (error, response) => {
+    this.currentRequests--;
+
+    if (error) {
+      return reject(new Error('Wrong clientId or privateKey'));
+    }
+
+    if (response.status === 'OVER_QUERY_LIMIT') {
+      return reject(new Error('Over query limit'));
+    }
+
+    if (isEmpty(response.results)) {
+      return reject(new Error('No results found'));
+    }
+
+    const location = response.results[0].geometry.location;
+
+    this.cache.add(address, location);
+    return resolve(location);
   });
 };
 

@@ -51,6 +51,8 @@ Type `String`. The path of the cache file, in which the geocoding responses are 
 
 ## Contribution
 
+**Make sure to follow the [Git Commit Conventions](https://github.com/ubilabs/node-geobatch/blob/master/CONVENTIONS.md)! Test and lint the code and adapt to the code style used in the project.**
+
 Clone the repository and run:
 
 ```sh
@@ -63,7 +65,6 @@ To run the tests, run:
 npm test
 ```
 
-**Make sure to test and lint the code and adapt to the code style used in the project.**
 
 ## License (MIT)
 

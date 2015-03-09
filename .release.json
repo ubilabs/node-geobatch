@@ -1,6 +1,6 @@
 {
   "non-interactive": true,
-  "dry-run": true,
+  "dry-run": false,
   "verbose": true,
   "force": false,
   "pkgFiles": ["package.json"],

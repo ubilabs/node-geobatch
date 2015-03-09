@@ -20,7 +20,7 @@
     "generatechangelog": "./node_modules/.bin/conventional-changelog-generator",
     "commitchangelog": "git add CHANGELOG.md && git commit -m 'chore(changelog): new version'",
     "changelog": "npm run generatechangelog && npm run commitchangelog",
-    "release": "./node_modules/.bin/release-it --dry-run --non-interactive",
+    "release": "./node_modules/.bin/release-it",
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {

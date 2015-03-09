@@ -18,9 +18,9 @@
     "pretest": "npm run lint",
     "test": "./node_modules/.bin/_mocha test",
     "generatechangelog": "./node_modules/.bin/conventional-changelog-generator",
-    "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
-    "changelog": "npm run generatechangelog && npm run commitchangelog",
-    "release": "./node_modules/.bin/release-it",
+    "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\"",
+    "changelog": "npm run generatechangelog && git reset package.json && npm run commitchangelog && git add package.json",
+    "release": "git reset && ./node_modules/.bin/release-it",
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {

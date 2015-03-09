@@ -17,6 +17,7 @@
     "prepublish": "npm run lint",
     "pretest": "npm run lint",
     "test": "./node_modules/.bin/_mocha test",
+    "changelog": "./node_modules/.bin/conventional-changelog-generator",
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "traceur-runner": "^1.0.2"
   },
   "devDependencies": {
+    "conventional-changelog-generator": "0.0.3",
     "eslint": "^0.15.1",
     "mocha": "2.1.0",
     "should": "^5.0.1",

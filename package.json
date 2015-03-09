@@ -17,7 +17,10 @@
     "prepublish": "npm run lint",
     "pretest": "npm run lint",
     "test": "./node_modules/.bin/_mocha test",
-    "changelog": "./node_modules/.bin/conventional-changelog-generator",
+    "generatechangelog": "./node_modules/.bin/conventional-changelog-generator",
+    "commitchangelog": "git add CHANGELOG.md && git commit -m 'chore(changelog): new version'",
+    "changelog": "npm run generatechangelog && npm run commitchangelog",
+    "release": "./node_modules/.bin/release-it --dry-run --non-interactive",
     "lint": "./node_modules/.bin/eslint ."
   },
   "dependencies": {
@@ -31,6 +34,7 @@
     "conventional-changelog-generator": "0.0.3",
     "eslint": "^0.15.1",
     "mocha": "2.1.0",
+    "release-it": "0.0.15",
     "should": "^5.0.1",
     "should-promised": "^0.1.0"
   }

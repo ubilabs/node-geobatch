@@ -1,0 +1,16 @@
+{
+  "non-interactive": true,
+  "dry-run": true,
+  "verbose": true,
+  "force": false,
+  "pkgFiles": ["package.json"],
+  "increment": "patch",
+  "commitMessage": "chore(release): %s",
+  "tagName": "%s",
+  "tagAnnotation": "Release %s",
+  "buildCommand": "npm run changelog",
+  "distRepo": false,
+  "private": false,
+  "publish": true,
+  "publishPath": "."
+}

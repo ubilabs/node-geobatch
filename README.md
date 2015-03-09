@@ -25,6 +25,58 @@ geoBatch.geocode(['Hamburg', 'Berlin'])
   });
 ```
 
+### Result
+
+The data in the example above is an object like this:
+
+```js
+{
+  error: null,
+  address: 'Hamburg',
+  location: {
+    lat: 53.5510846,
+    lng: 9.9936818
+  },
+  total: 2,
+  current: 1,
+  pending: 1,
+  percent: 50,
+  estimatedDuration: 189
+}
+```
+
+#### `error`
+
+Type `string`. Contains the error message. Default `null`.
+
+#### `address`
+
+Type `string`. Contains the geocoded address. Default `''`.
+
+#### `location`
+
+Type `Object`. Contains the `lat` and `lng`. Default `{}`.
+
+#### `total`
+
+Type `Number`. The total number of addresses to geocode.
+
+#### `current`
+
+Type `Number`. The index of the current geocoded address.
+
+#### `pending`
+
+Type `Number`. The number of addresses to still geocode.
+
+#### `percent`
+
+Type `Number`. The percentage that got geocoded already.
+
+#### `estimatedDuration`
+
+Type `Number`. The estimated duration based on past progress. In milliseconds.
+
 ### Options
 
 You can pass in options on initalization of the GeoBatch:

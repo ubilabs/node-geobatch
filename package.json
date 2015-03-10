@@ -21,7 +21,7 @@
     "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
     "changelog": "npm run generatechangelog && git reset package.json && npm run commitchangelog && git add package.json",
     "release": "git reset && ./node_modules/.bin/release-it",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint ./src ./test"
   },
   "dependencies": {
     "amp-is-empty": "^1.0.2",

@@ -75,13 +75,15 @@ describe('Testing geocoder', function() {
     const geocoder = new Geocoder(),
       address = 'Hamburg';
 
-    geocoder.geocodeAddress(address).then(function(location) {
-      should(location).be.an.object;
-      should(location).have.keys('lat', 'lng');
-      should(location.lat).be.above(53);
-      should(location.lat).be.below(54);
-      should(location.lng).be.above(9);
-      should(location.lng).be.below(10);
+    geocoder.geocodeAddress(address).then(function(result) {
+      should(result.address_components).be.an.Array;
+      should(result.formatted_address).be.a.String;
+      should(result.geometry.location).be.an.object;
+      should(result.geometry.location).have.keys('lat', 'lng');
+      should(result.geometry.location.lat).be.above(53);
+      should(result.geometry.location.lat).be.below(54);
+      should(result.geometry.location.lng).be.above(9);
+      should(result.geometry.location.lng).be.below(10);
       done();
     });
   });
@@ -114,8 +116,8 @@ describe('Testing geocoder', function() {
     db.put(dummyAddress, dummyLocation, () => {
       const geocoder = new Geocoder();
 
-      geocoder.geocodeAddress(dummyAddress).then(function(location) {
-        should.deepEqual(dummyLocation, location);
+      geocoder.geocodeAddress(dummyAddress).then(function(result) {
+        should.deepEqual(dummyLocation, result);
         db.close();
         done();
       });

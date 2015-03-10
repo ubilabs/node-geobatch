@@ -77,12 +77,12 @@ describe('Testing index', function() {
       geoBatch.geocode(['Hamburg', 'Berlin'])
         .on('data', function(data) {
           should(data).be.an.Object;
-          should(data.address).be.a.String;
-          should(data.location).be.an.Object;
-          should(data.location.lat).be.a.Number;
-          should(data.location.lng).be.a.Number;
+          should(data.rawAddress).be.a.String;
+          should(data.address.geometry.location).be.an.Object;
+          should(data.address.geometry.location.lat).be.a.Number;
+          should(data.address.geometry.location.lng).be.a.Number;
           should(data.error).be.null;
-          found[data.address] = true;
+          found[data.rawAddress] = true;
           geocodeResponses++;
         })
         .on('end', function() {
@@ -122,12 +122,12 @@ describe('Testing index', function() {
           should(data.estimatedDuration).be.a.Number;
           should(data.total).equal(2);
           should(data.estimatedDuration).not.equal(0);
-          if (data.address === 'Hamburg') {
+          if (data.rawAddress === 'Hamburg') {
             should(data.pending).equal(1);
             should(data.current).equal(1);
             should(data.percent).equal(50);
           }
-          if (data.address === 'Berlin') {
+          if (data.rawAddress === 'Berlin') {
             should(data.pending).equal(0);
             should(data.current).equal(2);
             should(data.percent).equal(100);
@@ -147,7 +147,7 @@ describe('Testing index', function() {
 
       geoBatch.geocode(['Hamburg'])
         .on('data', function(data) {
-          should(data.address).equal('Hamburg');
+          should(data.rawAddress).equal('Hamburg');
         })
         .on('end', function() {
           finishedCalls++;
@@ -159,7 +159,7 @@ describe('Testing index', function() {
 
       geoBatch.geocode(['Munich'])
         .on('data', function(data) {
-          should(data.address).equal('Munich');
+          should(data.rawAddress).equal('Munich');
         })
         .on('end', function() {
           finishedCalls++;
@@ -171,7 +171,7 @@ describe('Testing index', function() {
 
       geoBatch.geocode(['Leipzig'])
         .on('data', function(data) {
-          should(data.address).equal('Leipzig');
+          should(data.rawAddress).equal('Leipzig');
         })
         .on('end', function() {
           finishedCalls++;
@@ -197,7 +197,7 @@ describe('Testing index', function() {
       ])
         .on('data', function(data) {
           should(data.error).be.null;
-          should(data.location).be.an.Object;
+          should(data.address).be.an.Object;
         })
         .on('end', function() {
           done();

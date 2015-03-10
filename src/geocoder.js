@@ -36,30 +36,30 @@ const Geocoder = function(options) {
 
 /**
  * Geocode a single address
- * @param {String} address The address to geocode
+ * @param {String} rawAddress The address to geocode
  * @return {Promise} The promise
  */
-Geocoder.prototype.geocodeAddress = function(address) {
-  address = address.replace('\'', '');
+Geocoder.prototype.geocodeAddress = function(rawAddress) {
+  rawAddress = rawAddress.replace('\'', '');
 
-  const cachedAddress = this.cache.get(address);
+  const cachedAddress = this.cache.get(rawAddress);
 
   return new Promise((resolve, reject) => {
     if (cachedAddress) {
       return resolve(cachedAddress);
     }
 
-    this.startGeocode(address, resolve, reject);
+    this.startGeocode(rawAddress, resolve, reject);
   });
 };
 
 /**
  * Start geocoding a single address
- * @param {String} address The address to geocode
+ * @param {String} rawAddress The address to geocode
  * @param {Function} resolve The Promise resolve function
  * @param {Function} reject The Promise reject function
  */
-Geocoder.prototype.startGeocode = function(address, resolve, reject) {
+Geocoder.prototype.startGeocode = function(rawAddress, resolve, reject) {
   let now = new Date();
 
   if (
@@ -67,7 +67,7 @@ Geocoder.prototype.startGeocode = function(address, resolve, reject) {
     now - this.lastGeocode <= this.timeBetweenRequests
   ) {
     setTimeout(() => {
-      this.startGeocode(address, resolve, reject);
+      this.startGeocode(rawAddress, resolve, reject);
     }, this.timeBetweenRequests);
     return;
   }
@@ -75,7 +75,7 @@ Geocoder.prototype.startGeocode = function(address, resolve, reject) {
   this.currentRequests++;
   this.lastGeocode = now;
 
-  this.googlemaps.geocode(address, (error, response) => {
+  this.googlemaps.geocode(rawAddress, (error, response) => {
     this.currentRequests--;
 
     if (error) {
@@ -90,10 +90,10 @@ Geocoder.prototype.startGeocode = function(address, resolve, reject) {
       return reject(new Error('No results found'));
     }
 
-    const location = response.results[0].geometry.location;
+    const address = response.results[0];
 
-    this.cache.add(address, location);
-    return resolve(location);
+    this.cache.add(rawAddress, address);
+    return resolve(address);
   });
 };
 

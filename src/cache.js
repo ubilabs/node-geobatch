@@ -13,16 +13,16 @@ const Cache = function(cacheFile = 'geocache.db') {
 
 /**
  * Add new entries to the Cache
- * @param {String}   rawAddress  The address that shall be cached
- * @param {Object}   address The geocoded location
+ * @param {String}   address  The address that shall be cached
+ * @param {Object}   result The geocoded location
  * @param {Function} callback The callback
  */
 Cache.prototype.add = function(
-  rawAddress,
   address,
+  result,
   callback = function() {}
 ) {
-  this.db.put(rawAddress, address, (error) => {
+  this.db.put(address, result, (error) => {
     if (error) {
       throw error;
     }
@@ -33,11 +33,11 @@ Cache.prototype.add = function(
 
 /**
  * Add new entries to the Cache
- * @param {String} rawAddress  The address that shall be cached
- * @return {Object} The geocoded address
+ * @param {String} address  The address that shall be cached
+ * @return {Object} The geocoded result
  */
-Cache.prototype.get = function(rawAddress) {
-  return this.db.get(rawAddress);
+Cache.prototype.get = function(address) {
+  return this.db.get(address);
 };
 
 module.exports = Cache;

@@ -35,24 +35,24 @@ const Geocoder = function(options = {}) {
 
 /**
  * Geocode a single address
- * @param {String} rawAddress The address to geocode
+ * @param {String} address The address to geocode
  * @return {Promise} The promise
  */
-Geocoder.prototype.geocodeAddress = function(rawAddress) {
+Geocoder.prototype.geocodeAddress = function(address) {
   return new Promise((resolve, reject) => {
-    this.startGeocode(rawAddress, resolve, reject);
+    this.startGeocode(address, resolve, reject);
   });
 };
 
 /**
  * Start geocoding a single address
- * @param {String} rawAddress The address to geocode
+ * @param {String} address The address to geocode
  * @param {Function} resolve The Promise resolve function
  * @param {Function} reject The Promise reject function
  * @return {?} Something to get out
  */
-Geocoder.prototype.startGeocode = function(rawAddress, resolve, reject) {
-  const cachedAddress = this.cache.get(rawAddress);
+Geocoder.prototype.startGeocode = function(address, resolve, reject) {
+  const cachedAddress = this.cache.get(address);
 
   if (cachedAddress) {
     return resolve(cachedAddress);
@@ -65,14 +65,14 @@ Geocoder.prototype.startGeocode = function(rawAddress, resolve, reject) {
     now - this.lastGeocode <= this.timeBetweenRequests
   ) {
     return setTimeout(() => {
-      this.startGeocode(rawAddress.replace('\'', ''), resolve, reject);
+      this.startGeocode(address.replace('\'', ''), resolve, reject);
     }, this.timeBetweenRequests);
   }
 
   this.currentRequests++;
   this.lastGeocode = now;
 
-  this.googlemaps.geocode(rawAddress, (error, response) => {
+  this.googlemaps.geocode(address, (error, response) => {
     this.currentRequests--;
 
     if (error) {
@@ -87,10 +87,10 @@ Geocoder.prototype.startGeocode = function(rawAddress, resolve, reject) {
       return reject(new Error('No results found'));
     }
 
-    const address = response.results[0];
+    const result = response.results[0];
 
-    this.cache.add(rawAddress, address);
-    return resolve(address);
+    this.cache.add(address, result);
+    return resolve(result);
   });
 };
 

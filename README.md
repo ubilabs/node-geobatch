@@ -32,8 +32,9 @@ The data in the example above is an object like this:
 ```js
 {
   error: null,
-  rawAddress: 'Hamburg',
-  address: {
+  address: 'Hamburg',
+  location: { lat: 53.5510846, lng: 9.9936818 },
+  result: {
     address_components: [ … ],
     formatted_address: 'Hamburg, Germany',
     geometry: {
@@ -57,13 +58,17 @@ The data in the example above is an object like this:
 
 Type `string`. Contains the error message. Default `null`.
 
-#### `rawAddress`
+#### `address`
 
 Type `string`. Contains the address that was put into the geocoder. Default `''`.
 
-#### `address`
+#### `location`
 
-Type `Object`. The result from the Google Maps Geocoding API. Default `{}`.
+Type `Object`. The coordinates returned from the Google Maps Geocoding API. Default `{}`.
+
+#### `result`
+
+Type `Object`. The complete result from the Google Maps Geocoding API. Default `{}`.
 
 #### `total`
 

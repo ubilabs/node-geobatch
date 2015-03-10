@@ -20,15 +20,15 @@ const GeoBatch = function(options = {}) {
 
 /**
  * Geocode the passed in addresses
- * @param {Array} rawAddresses The addresses to geocode
+ * @param {Array} addresses The addresses to geocode
  * @return {Function} The stream
  */
-GeoBatch.prototype.geocode = function(rawAddresses) {
-  const arrayStream = new ArrayStream(rawAddresses),
+GeoBatch.prototype.geocode = function(addresses) {
+  const arrayStream = new ArrayStream(addresses),
     geocodeStream = new GeocodeStream(this.geocoder);
 
   geocodeStream.stats = {
-    total: rawAddresses.length,
+    total: addresses.length,
     current: 0,
     startTime: new Date()
   };
@@ -51,36 +51,37 @@ util.inherits(GeocodeStream, stream.Transform);
 /* eslint-disable no-underscore-dangle */
 /**
  * The _transform function for the stream.
- * @param {String}   rawAddress The address to geocode
+ * @param {String}   address The address to geocode
  * @param {String}   enc The encryption
  * @param {Function} done The done callback function
  */
-GeocodeStream.prototype._transform = function(rawAddress, enc, done) {
+GeocodeStream.prototype._transform = function(address, enc, done) {
   /* eslint-enable no-underscore-dangle */
 
-  this.geocoder.geocodeAddress(rawAddress)
-    .then((address) => {
-      let result = this.getMetainfo(rawAddress);
+  this.geocoder.geocodeAddress(address)
+    .then((result) => {
+      let data = this.getMetainfo(address);
 
-      result.address = address;
-      this.push(result);
+      data.result = result;
+      data.location = result.geometry.location;
+      this.push(data);
       done();
     })
     .catch((error) => {
-      let result = this.getMetainfo(rawAddress);
+      let data = this.getMetainfo(address);
 
-      result.error = error.message;
-      this.push(result);
+      data.error = error.message;
+      this.push(data);
       done();
     });
 };
 
 /**
  * Get the result meta information
- * @param {String} rawAddress The address
+ * @param {String} address The address
  * @return {Object} The meta information
  */
-GeocodeStream.prototype.getMetainfo = function(rawAddress) {
+GeocodeStream.prototype.getMetainfo = function(address) {
   this.stats.current++;
 
   const now = new Date(),
@@ -88,8 +89,9 @@ GeocodeStream.prototype.getMetainfo = function(rawAddress) {
 
   return {
     error: null,
-    rawAddress: rawAddress,
-    address: {},
+    address: address,
+    location: {},
+    result: {},
     total: this.stats.total,
     current: this.stats.current,
     pending: this.stats.total - this.stats.current,

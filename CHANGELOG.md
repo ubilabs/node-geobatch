@@ -1,3 +1,11 @@
+### 1.0.2 (2015-03-10)
+
+
+#### Bug Fixes
+
+* **all:** switch from traceur to babel for ES6 ([b882beeb](https://github.com/ubilabs/node-geobatch/commit/b882beeb349a157541d1f558385a74e79a3d2a00))
+
+
 ### 1.0.1 (2015-03-09)
 
 

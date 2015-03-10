@@ -65,14 +65,14 @@ Geocoder.prototype.startGeocode = function(address, resolve, reject) {
     now - this.lastGeocode <= this.timeBetweenRequests
   ) {
     return setTimeout(() => {
-      this.startGeocode(address.replace('\'', ''), resolve, reject);
+      this.startGeocode(address, resolve, reject);
     }, this.timeBetweenRequests);
   }
 
   this.currentRequests++;
   this.lastGeocode = now;
 
-  this.googlemaps.geocode(address, (error, response) => {
+  this.googlemaps.geocode(address.replace('\'', ''), (error, response) => {
     this.currentRequests--;
 
     if (error) {

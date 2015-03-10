@@ -39,8 +39,6 @@ const Geocoder = function(options = {}) {
  * @return {Promise} The promise
  */
 Geocoder.prototype.geocodeAddress = function(rawAddress) {
-  rawAddress = rawAddress.replace('\'', '');
-
   const cachedAddress = this.cache.get(rawAddress);
 
   return new Promise((resolve, reject) => {
@@ -66,7 +64,7 @@ Geocoder.prototype.startGeocode = function(rawAddress, resolve, reject) {
     now - this.lastGeocode <= this.timeBetweenRequests
   ) {
     setTimeout(() => {
-      this.startGeocode(rawAddress, resolve, reject);
+      this.startGeocode(rawAddress.replace('\'', ''), resolve, reject);
     }, this.timeBetweenRequests);
     return;
   }

@@ -60,7 +60,7 @@ GeocodeStream.prototype._transform = function(address, enc, done) {
 
   this.geocoder.geocodeAddress(address)
     .then((result) => {
-      let data = this.getMetainfo(address);
+      let data = this.getMetaInfo(address);
 
       data.result = result;
       data.location = result.geometry.location;
@@ -68,7 +68,7 @@ GeocodeStream.prototype._transform = function(address, enc, done) {
       done();
     })
     .catch((error) => {
-      let data = this.getMetainfo(address);
+      let data = this.getMetaInfo(address);
 
       data.error = error.message;
       this.push(data);
@@ -81,7 +81,7 @@ GeocodeStream.prototype._transform = function(address, enc, done) {
  * @param {String} address The address
  * @return {Object} The meta information
  */
-GeocodeStream.prototype.getMetainfo = function(address) {
+GeocodeStream.prototype.getMetaInfo = function(address) {
   this.stats.current++;
 
   const now = new Date(),

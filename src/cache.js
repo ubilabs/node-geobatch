@@ -18,8 +18,8 @@ const Cache = function(cacheFile = 'geocache.db') {
  * @param {Function} callback The callback
  */
 Cache.prototype.add = function(
-  address = '',
-  location = {},
+  address,
+  location,
   callback = function() {}
 ) {
   this.db.put(address, location, (error) => {
@@ -36,7 +36,7 @@ Cache.prototype.add = function(
  * @param {String} address  The address that shall be cached
  * @return {Object} The geocoded location
  */
-Cache.prototype.get = function(address = '') {
+Cache.prototype.get = function(address) {
   return this.db.get(address);
 };
 

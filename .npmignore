@@ -1,0 +1,5 @@
+src
+test
+.drone.yml
+.release.json
+CONVENTIONS.md

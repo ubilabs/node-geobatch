@@ -11,12 +11,12 @@
     "type": "git",
     "url": "https://github.com/ubilabs/node-geobatch"
   },
-  "main": "index.js",
+  "main": "dist",
   "scripts": {
-    "start": "node index.js",
-    "prepublish": "npm run lint",
+    "build": "./node_modules/.bin/babel src --out-dir dist",
+    "prepublish": "npm run lint && npm run build",
     "pretest": "npm run lint",
-    "test": "./node_modules/.bin/_mocha test",
+    "test": "./node_modules/.bin/babel-node ./node_modules/.bin/_mocha test",
     "generatechangelog": "./node_modules/.bin/conventional-changelog-generator",
     "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
     "changelog": "npm run generatechangelog && git reset package.json && npm run commitchangelog && git add package.json",
@@ -26,11 +26,10 @@
   "dependencies": {
     "amp-is-empty": "^1.0.2",
     "flat-file-db": "^0.1.4",
-    "googlemaps": "^0.1.20",
-    "traceur": "0.0.85",
-    "traceur-runner": "^1.0.2"
+    "googlemaps": "^0.1.20"
   },
   "devDependencies": {
+    "babel": "^4.7.5",
     "conventional-changelog-generator": "0.0.3",
     "eslint": "^0.15.1",
     "mocha": "2.1.0",

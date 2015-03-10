@@ -1,6 +1,4 @@
 /* eslint-disable no-unused-expressions, one-var */
-require('traceur-runner');
-
 const should = require('should'),
   fs = require('fs'),
   GeoBatch = require('../src/index.js');

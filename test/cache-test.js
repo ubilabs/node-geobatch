@@ -1,6 +1,4 @@
 /* eslint-disable no-unused-expressions */
-require('traceur-runner');
-
 var should = require('should'),
   fs = require('fs'),
   Cache = require('../src/cache.js');

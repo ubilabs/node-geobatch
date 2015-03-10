@@ -1,6 +1,4 @@
 /* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
-require('traceur-runner');
-
 const should = require('should'),
   promised = require('should-promised'),
   fs = require('fs'),

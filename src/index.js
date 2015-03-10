@@ -52,10 +52,10 @@ util.inherits(GeocodeStream, stream.Transform);
 /**
  * The _transform function for the stream.
  * @param {String}   address The address to geocode
- * @param {String}   enc The encryption
+ * @param {String}   encoding The encoding
  * @param {Function} done The done callback function
  */
-GeocodeStream.prototype._transform = function(address, enc, done) {
+GeocodeStream.prototype._transform = function(address, encoding, done) {
   /* eslint-enable no-underscore-dangle */
 
   this.geocoder.geocodeAddress(address)

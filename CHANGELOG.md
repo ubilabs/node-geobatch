@@ -1,3 +1,22 @@
+## 1.1.0 (2015-03-10)
+
+
+#### Bug Fixes
+
+* **geocoder:**
+  * do not change address ([f16f9e4f](https://github.com/ubilabs/node-geobatch/commit/f16f9e4f97ee4484d954f8570b6eb4dbe851eda3))
+  * do not manipulate original address ([e0d1eca0](https://github.com/ubilabs/node-geobatch/commit/e0d1eca0b8c8e5d2fc70f784ac5fca28eaf21177))
+
+
+#### Features
+
+* **cache:** remove default values for location and address ([58c27aa2](https://github.com/ubilabs/node-geobatch/commit/58c27aa2b8950bb9ca8c258b1f0005255db7e1c8))
+* **geocoder:** check cache repeatedly before geocoding requests ([35baec7b](https://github.com/ubilabs/node-geobatch/commit/35baec7bdc3c3fcaafca0fb95fe93572822dd017))
+* **index:**
+  * also return complete Maps API result on geocode ([87407bc0](https://github.com/ubilabs/node-geobatch/commit/87407bc0c9b32929f0e686b8a0fec244bb002f20))
+  * return complete Google Maps geocoding result ([4efe2c44](https://github.com/ubilabs/node-geobatch/commit/4efe2c44596a7fa199473631a65620385127370a))
+
+
 ### 1.0.2 (2015-03-10)
 
 

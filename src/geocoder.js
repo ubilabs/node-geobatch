@@ -8,8 +8,7 @@ const Cache = require('./cache'),
  * @type {Function}
  * @param {Object} options The options for the Geocoder
  */
-const Geocoder = function(options) {
-  options = options || {};
+const Geocoder = function(options = {}) {
   options.clientId = options.clientId || null;
   options.privateKey = options.privateKey || null;
 

@@ -1,5 +1,9 @@
 # node-geobatch
 
+[![Build Status](https://ci.ubidev.net/api/badge/github.com/ubilabs/node-geobatch/status.svg?branch=master)](https://ci.ubidev.net/github.com/ubilabs/node-geobatch) [![npm version](https://badge.fury.io/js/geobatch.svg)](http://badge.fury.io/js/geobatch)
+
+[![forthebadge](http://forthebadge.com/images/badges/uses-badges.svg)](http://forthebadge.com)
+
 Batch geocode addresses from multiple sources. It limits the calls to not run in `OVER_QUERY_LIMIT` by the Google Maps API. Results are cached locally to prevent duplicate geocoding requests.
 
 ## Usage

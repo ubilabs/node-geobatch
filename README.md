@@ -1,6 +1,6 @@
 # node-geobatch
 
-[![Build Status](https://ci.ubidev.net/api/badge/github.com/ubilabs/node-geobatch/status.svg?branch=master)](https://ci.ubidev.net/github.com/ubilabs/node-geobatch) [![npm version](https://badge.fury.io/js/geobatch.svg)](http://badge.fury.io/js/geobatch)
+[![Build Status](https://travis-ci.org/ubilabs/node-geobatch.svg?branch=master)](https://travis-ci.org/ubilabs/node-geobatch) [![npm version](https://badge.fury.io/js/geobatch.svg)](http://badge.fury.io/js/geobatch)
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-badges.svg)](http://forthebadge.com)
 

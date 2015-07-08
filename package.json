@@ -13,15 +13,15 @@
   },
   "main": "dist",
   "scripts": {
-    "build": "./node_modules/.bin/babel src --out-dir dist",
+    "build": "babel src --out-dir dist",
     "prepublish": "npm run lint && npm run build",
     "pretest": "npm run lint",
-    "test": "./node_modules/.bin/babel-node ./node_modules/.bin/_mocha test",
-    "generatechangelog": "./node_modules/.bin/conventional-changelog-generator",
+    "test": "babel-node _mocha test",
+    "generatechangelog": "conventional-changelog-generator",
     "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
     "changelog": "npm run generatechangelog && git reset package.json && npm run commitchangelog && git add package.json",
-    "release": "git reset && ./node_modules/.bin/release-it",
-    "lint": "./node_modules/.bin/eslint ./src ./test"
+    "release": "git reset && release-it",
+    "lint": "eslint ./src ./test"
   },
   "dependencies": {
     "amp-is-empty": "^1.0.2",

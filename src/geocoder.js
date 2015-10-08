@@ -2,7 +2,7 @@
 
 import Cache from './cache';
 import isEmpty from 'amp-is-empty';
-import googlemaps from 'googlemaps';
+import GoogleGeocoder from './lib/google-geocoder';
 
 /**
  * Geocoder instance
@@ -14,7 +14,7 @@ export default class Geocoder {
    * Constructs a geocoder.
    * @param  {Object} options Geocoder options.
    */
-  constructor(options = {}) {
+  constructor(options = {}, geoCoder = GoogleGeocoder) {
     options.clientId = options.clientId || null;
     options.privateKey = options.privateKey || null;
 
@@ -34,10 +34,7 @@ export default class Geocoder {
     this.currentRequests = 0;
 
     this.cache = new Cache(options.cacheFile);
-    this.googlemaps = googlemaps;
-
-    this.googlemaps.config('google-client-id', options.clientId);
-    this.googlemaps.config('google-private-key', options.privateKey);
+    this.googlemaps = geoCoder.init(options);
   }
 
   /**

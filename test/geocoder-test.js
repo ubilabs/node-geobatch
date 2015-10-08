@@ -1,13 +1,8 @@
 /* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
-const should = require('should'),
-  promised = require('should-promised'),
-  fs = require('fs'),
-  flatfile = require('flat-file-db'),
-  Geocoder = require('../src/geocoder.js');
-
-/* eslint-disable no-console */
-console.log(promised);
-/* eslint-enable no-console */
+import should from 'should';
+import fs from 'fs';
+import flatfile from 'flat-file-db';
+import Geocoder from '../src/geocoder.js';
 
 describe('Testing geocoder', function() {
   afterEach(function(done) {

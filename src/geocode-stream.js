@@ -11,16 +11,13 @@ export default class GeocodeStream extends stream.Transform {
     this.geocoder = geocoder;
   }
 
-  /* eslint-disable no-underscore-dangle */
   /**
    * The _transform function for the stream.
    * @param {String}   address The address to geocode
    * @param {String}   encoding The encoding
    * @param {Function} done The done callback function
    */
-  _transform(address, encoding, done) {
-    /* eslint-enable no-underscore-dangle */
-
+  _transform(address, encoding, done) { // eslint-disable-line
     this.geocoder.geocodeAddress(address)
       .then(result => {
         let data = this.getMetaInfo(address);

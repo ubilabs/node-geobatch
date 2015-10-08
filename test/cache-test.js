@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
-var should = require('should'),
-  fs = require('fs'),
-  Cache = require('../src/cache.js');
+import should from 'should';
+import fs from 'fs';
+import Cache from '../src/cache.js';
 
 describe('Testing cache', function() {
   afterEach(function(done) {

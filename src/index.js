@@ -10,12 +10,9 @@ import GeocodeStream from './geocode-stream';
  * @param {Object} options The options for the GeoBatch
  */
 export default class GeoBatch {
-  constructor(options = {}) {
-    this.geocoder = new Geocoder({
-      cacheFile: options.cacheFile || 'geocache.db',
-      clientId: options.clientId,
-      privateKey: options.privateKey
-    });
+  constructor({cacheFile, clientId, privateKey} =
+    {cacheFile: 'geocache.db', clientId: null, privateKey: null}) {
+    this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
   }
 
   /**

@@ -1,11 +1,12 @@
 /* eslint-disable one-var */
 
-const Cache = require('./cache'),
-  isEmpty = require('amp-is-empty');
+import Cache from './cache';
+import isEmpty from 'amp-is-empty';
+import googlemaps from 'googlemaps';
 
 /**
  * Geocoder instance
- * @type {Function}
+ * @type {Class}
  * @param {Object} options The options for the Geocoder
  */
 export default class Geocoder {
@@ -29,7 +30,7 @@ export default class Geocoder {
     this.currentRequests = 0;
 
     this.cache = new Cache(options.cacheFile);
-    this.googlemaps = require('googlemaps');
+    this.googlemaps = googlemaps;
 
     this.googlemaps.config('google-client-id', options.clientId);
     this.googlemaps.config('google-private-key', options.privateKey);

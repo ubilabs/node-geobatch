@@ -1,4 +1,4 @@
-const stream = require('stream');
+import stream from 'stream';
 
 /**
  * Create a stream from an array
@@ -15,11 +15,10 @@ export default class ArrayStream extends stream.Readable {
   /**
    * The _read function for the addresses stream.
    */
-  /* eslint-disable no-underscore-dangle */
-  _read() {
-  /* eslint-enable no-underscore-dangle */
+  _read() { // eslint-disable-line no-underscore-dangle
     if (this.currentIndex === this.values.length) {
-      return this.push(null);
+      this.push(null);
+      return;
     }
 
     this.push(this.values[this.currentIndex++]);

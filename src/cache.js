@@ -2,8 +2,8 @@
 import flatfile from 'flat-file-db';
 
 /**
- * Cache instance stores already done geocodings
- * @type {Function}
+ * Cache instance to store key value pairs.
+ * @type {Class}
  * @param {String} cacheFile The name of the file to cache
  */
 export default class Cache {
@@ -13,12 +13,12 @@ export default class Cache {
 
   /**
    * Add new entries to the Cache
-   * @param {String}   address  The address that shall be cached
-   * @param {Object}   result The geocoded location
+   * @param {String}   key  The key that shall be cached
+   * @param {Object}   value The value that should be stored in the cache
    * @param {Function} callback The callback
    */
-  add(address, result, callback = () => {}) {
-    this.db.put(address, result, error => {
+  add(key, value, callback = () => {}) {
+    this.db.put(key, value, error => {
       if (error) {
         throw error;
       }
@@ -29,10 +29,10 @@ export default class Cache {
 
   /**
    * Add new entries to the Cache
-   * @param {String} address  The address that shall be cached
-   * @return {Object} The geocoded result
+   * @param {String} key  The key that should be retrieved
+   * @return {Object} The value
    */
-  get(address) {
-    return this.db.get(address);
+  get(key) {
+    return this.db.get(key);
   }
 }

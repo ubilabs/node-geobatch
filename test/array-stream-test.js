@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-expressions, one-var */
-const should = require('should'),
-  ArrayStream = require('../src/array-stream.js');
+import should from 'should';
+import ArrayStream from '../src/array-stream.js';
 
 describe('Testing array-stream', function() {
   it('should create a new instance', function() {

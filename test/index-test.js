@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions, one-var */
-const should = require('should'),
-  fs = require('fs'),
-  GeoBatch = require('../src/index.js');
+import should from 'should';
+import fs from 'fs';
+import GeoBatch from '../src/index.js';
 
 describe('Testing index', function() {
   afterEach(function(done) {

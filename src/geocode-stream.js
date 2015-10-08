@@ -5,6 +5,10 @@ import stream from 'stream';
  * @param {Object} geocoder The geocoder
  */
 export default class GeocodeStream extends stream.Transform {
+  /**
+   * Constructs a geocodeStream.
+   * @param  {Object} geocoder A geocoder.
+   */
   constructor(geocoder) {
     super({objectMode: true});
 

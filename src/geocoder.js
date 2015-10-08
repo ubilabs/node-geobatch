@@ -10,6 +10,10 @@ import googlemaps from 'googlemaps';
  * @param {Object} options The options for the Geocoder
  */
 export default class Geocoder {
+  /**
+   * Constructs a geocoder.
+   * @param  {Object} options Geocoder options.
+   */
   constructor(options = {}) {
     options.clientId = options.clientId || null;
     options.privateKey = options.privateKey || null;

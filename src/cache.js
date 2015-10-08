@@ -7,6 +7,10 @@ import flatfile from 'flat-file-db';
  * @param {String} cacheFile The name of the file to cache
  */
 export default class Cache {
+  /**
+   * Constructs the Cache.
+   * @param  {String} cacheFile The filename for the cache.
+   */
   constructor(cacheFile = 'geocache.db') {
     this.db = flatfile.sync(cacheFile);
   }

@@ -5,6 +5,10 @@ import stream from 'stream';
  * @param {Array} values The values
  */
 export default class ArrayStream extends stream.Readable {
+  /**
+   * Constructs an Array stream.
+   * @param  {Array} values The array to base the stream on.
+   */
   constructor(values) {
     super({objectMode: true});
 

@@ -57,7 +57,6 @@ export default class Geocoder {
    */
   startGeocode(address, resolve, reject) {
     const cachedAddress = this.cache.get(address);
-
     if (cachedAddress) {
       return resolve(cachedAddress);
     }

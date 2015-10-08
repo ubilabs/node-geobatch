@@ -1,43 +1,42 @@
 /* eslint-disable one-var */
-
-const flatfile = require('flat-file-db');
+import flatfile from 'flat-file-db';
 
 /**
- * Cache instance stores already done geocodings
- * @type {Function}
+ * Cache instance to store key value pairs.
+ * @type {Class}
  * @param {String} cacheFile The name of the file to cache
  */
-const Cache = function(cacheFile = 'geocache.db') {
-  this.db = flatfile.sync(cacheFile);
-};
+export default class Cache {
+  /**
+   * Constructs the Cache.
+   * @param  {String} cacheFile The filename for the cache.
+   */
+  constructor(cacheFile = 'geocache.db') {
+    this.db = flatfile.sync(cacheFile);
+  }
 
-/**
- * Add new entries to the Cache
- * @param {String}   address  The address that shall be cached
- * @param {Object}   result The geocoded location
- * @param {Function} callback The callback
- */
-Cache.prototype.add = function(
-  address,
-  result,
-  callback = function() {}
-) {
-  this.db.put(address, result, (error) => {
-    if (error) {
-      throw error;
-    }
+  /**
+   * Add new entries to the Cache
+   * @param {String}   key  The key that shall be cached
+   * @param {Object}   value The value that should be stored in the cache
+   * @param {Function} callback The callback
+   */
+  add(key, value, callback = () => {}) {
+    this.db.put(key, value, error => {
+      if (error) {
+        throw error;
+      }
 
-    callback();
-  });
-};
+      callback();
+    });
+  }
 
-/**
- * Add new entries to the Cache
- * @param {String} address  The address that shall be cached
- * @return {Object} The geocoded result
- */
-Cache.prototype.get = function(address) {
-  return this.db.get(address);
-};
-
-module.exports = Cache;
+  /**
+   * Add new entries to the Cache
+   * @param {String} key  The key that should be retrieved
+   * @return {Object} The value
+   */
+  get(key) {
+    return this.db.get(key);
+  }
+}

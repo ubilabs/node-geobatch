@@ -1,29 +1,31 @@
-const stream = require('stream'),
-  util = require('util');
+import stream from 'stream';
 
 /**
  * Create a stream from an array
  * @param {Array} values The values
  */
-function ArrayStream(values) {
-  stream.Readable.call(this, {objectMode: true});
+export default class ArrayStream extends stream.Readable {
+  /**
+   * Constructs an Array stream.
+   * @param  {Array} values The array to base the stream on.
+   */
+  constructor(values) {
+    super({objectMode: true});
 
-  this.values = values;
-  this.currentIndex = 0;
-}
-util.inherits(ArrayStream, stream.Readable);
-
-/**
- * The _read function for the addresses stream.
- */
-/* eslint-disable no-underscore-dangle */
-ArrayStream.prototype._read = function() {
-/* eslint-enable no-underscore-dangle */
-  if (this.currentIndex === this.values.length) {
-    return this.push(null);
+    this.values = values;
+    this.currentIndex = 0;
   }
 
-  this.push(this.values[this.currentIndex++]);
-};
+  /**
+   * The _read function for the addresses stream.
+   */
+  _read() { // eslint-disable-line no-underscore-dangle
+    if (this.currentIndex === this.values.length) {
+      this.push(null);
+      return;
+    }
 
-module.exports = ArrayStream;
+    this.push(this.values[this.currentIndex++]);
+  }
+
+}

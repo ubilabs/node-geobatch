@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions, one-var */
-const should = require('should'),
-  fs = require('fs'),
-  GeoBatch = require('../src/index.js');
+import should from 'should';
+import fs from 'fs';
+import GeoBatch from '../src/index.js';
 
 describe('Testing index', function() {
   afterEach(function(done) {
@@ -190,7 +190,7 @@ describe('Testing index', function() {
     function(done) {
       const geoBatch = new GeoBatch();
 
-      this.timeout(15000);
+      this.timeout(15000);  // eslint-disable-line
 
       geoBatch.geocode([
         'Hamburg', 'Berlin', 'Leipzig', 'Stuttgart', 'Munich', 'Cologne',

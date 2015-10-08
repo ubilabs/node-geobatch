@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
-var should = require('should'),
-  fs = require('fs'),
-  Cache = require('../src/cache.js');
+import should from 'should';
+import fs from 'fs';
+import Cache from '../src/cache.js';
 
 describe('Testing cache', function() {
   afterEach(function(done) {
@@ -15,13 +15,13 @@ describe('Testing cache', function() {
   });
 
   it('should create a new instance when called without params', function() {
-    var cache = new Cache();
+    const cache = new Cache();
 
     should.exist(cache);
   });
 
   it('should create a new cache file when not existing', function(done) {
-    this.cache = new Cache();
+    const cache = new Cache(); // eslint-disable-line
 
     fs.exists('geocache.db', function(exists) {
       should(exists).be.true;
@@ -30,7 +30,7 @@ describe('Testing cache', function() {
   });
 
   it('should create a new cache file depending on the name', function(done) {
-    this.cache = new Cache('myPersonalGeocache.db');
+    const cache = new Cache('myPersonalGeocache.db'); // eslint-disable-line
 
     fs.exists('myPersonalGeocache.db', function(exists) {
       should(exists).be.true;

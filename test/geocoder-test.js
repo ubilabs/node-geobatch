@@ -1,13 +1,8 @@
 /* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
-const should = require('should'),
-  promised = require('should-promised'),
-  fs = require('fs'),
-  flatfile = require('flat-file-db'),
-  Geocoder = require('../src/geocoder.js');
-
-/* eslint-disable no-console */
-console.log(promised);
-/* eslint-enable no-console */
+import should from 'should';
+import fs from 'fs';
+import flatfile from 'flat-file-db';
+import Geocoder from '../src/geocoder.js';
 
 describe('Testing geocoder', function() {
   afterEach(function(done) {
@@ -37,7 +32,7 @@ describe('Testing geocoder', function() {
 
   it('should throw an error when there is only the client id', function() {
     should(function() {
-      this.geocoder = new Geocoder({
+      const geocoder = new Geocoder({ // eslint-disable-line
         clientId: 'dummy'
       });
     }).throw('Missing privateKey');
@@ -45,7 +40,7 @@ describe('Testing geocoder', function() {
 
   it('should throw an error when there is only the private key', function() {
     should(function() {
-      this.geocoder = new Geocoder({
+      const geocoder = new Geocoder({ // eslint-disable-line
         privateKey: 'dummy'
       });
     }).throw('Missing clientId');
@@ -64,7 +59,7 @@ describe('Testing geocoder', function() {
       }),
       address = 'Hamburg';
 
-    geocoder.geocodeAddress(address).catch((error) => {
+    geocoder.geocodeAddress(address).catch(error => {
       should(error).be.an.Error;
       should(error.message).equal('Wrong clientId or privateKey');
       done();
@@ -128,7 +123,7 @@ describe('Testing geocoder', function() {
     const geocoder = new Geocoder(),
       address = 'My dummy location that does not exist!';
 
-    geocoder.geocodeAddress(address).catch((error) => {
+    geocoder.geocodeAddress(address).catch(error => {
       should(error).be.an.Error;
       should(error.message).equal('No results found');
       done();

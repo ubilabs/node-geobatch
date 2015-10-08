@@ -190,7 +190,7 @@ describe('Testing index', function() {
     function(done) {
       const geoBatch = new GeoBatch();
 
-      this.timeout(15000);
+      this.timeout(15000);  // eslint-disable-line
 
       geoBatch.geocode([
         'Hamburg', 'Berlin', 'Leipzig', 'Stuttgart', 'Munich', 'Cologne',

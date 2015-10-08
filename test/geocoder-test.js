@@ -37,7 +37,7 @@ describe('Testing geocoder', function() {
 
   it('should throw an error when there is only the client id', function() {
     should(function() {
-      this.geocoder = new Geocoder({
+      const geocoder = new Geocoder({ // eslint-disable-line
         clientId: 'dummy'
       });
     }).throw('Missing privateKey');
@@ -45,7 +45,7 @@ describe('Testing geocoder', function() {
 
   it('should throw an error when there is only the private key', function() {
     should(function() {
-      this.geocoder = new Geocoder({
+      const geocoder = new Geocoder({ // eslint-disable-line
         privateKey: 'dummy'
       });
     }).throw('Missing clientId');
@@ -64,7 +64,7 @@ describe('Testing geocoder', function() {
       }),
       address = 'Hamburg';
 
-    geocoder.geocodeAddress(address).catch((error) => {
+    geocoder.geocodeAddress(address).catch(error => {
       should(error).be.an.Error;
       should(error.message).equal('Wrong clientId or privateKey');
       done();
@@ -128,7 +128,7 @@ describe('Testing geocoder', function() {
     const geocoder = new Geocoder(),
       address = 'My dummy location that does not exist!';
 
-    geocoder.geocodeAddress(address).catch((error) => {
+    geocoder.geocodeAddress(address).catch(error => {
       should(error).be.an.Error;
       should(error.message).equal('No results found');
       done();

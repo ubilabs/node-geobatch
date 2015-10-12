@@ -64,7 +64,6 @@ describe('Testing index', function() {
     assert(false);
   });
 
-
   it('should geocode addresses',
     function(done) {
       const geoBatch = new GeoBatch();

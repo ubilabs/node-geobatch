@@ -26,7 +26,8 @@
   "dependencies": {
     "amp-is-empty": "^1.0.2",
     "flat-file-db": "^0.1.4",
-    "googlemaps": "^0.1.20"
+    "googlemaps": "^0.1.20",
+    "into-stream": "^2.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.23",
@@ -34,9 +35,12 @@
     "conventional-changelog-generator": "0.0.3",
     "eslint": "^1.6.0",
     "into-stream": "^2.0.0",
+    "lie": "^3.0.1",
     "mocha": "2.1.0",
     "release-it": "0.0.15",
-    "should": "^5.0.1",
-    "should-promised": "^0.1.0"
+    "should": "^7.1.0",
+    "should-promised": "^0.1.0",
+    "sinon": "^1.17.1",
+    "stream-assert": "^2.0.3"
   }
 }

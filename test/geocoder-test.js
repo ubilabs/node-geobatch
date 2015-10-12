@@ -1,129 +1,215 @@
 /* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
 import should from 'should';
-import fs from 'fs';
-import flatfile from 'flat-file-db';
 import Geocoder from '../src/geocoder.js';
+import sinon from 'sinon';
+import {getGeocodeFunction, getGeocoderInterface} from './lib/helpers';
+
+class MockCache {
+  constructor() {}
+  get() {}
+  add() {}
+}
 
 describe('Testing geocoder', function() {
-  afterEach(function(done) {
-    fs.exists('geocache.db', function(exists) {
-      if (exists) {
-        fs.unlinkSync('geocache.db');
-      }
-
-      done();
-    });
-  });
-
-  it('should create a new instance when called without params', function() {
-    const geocoder = new Geocoder();
+  it('should create a new instance when called without options', function() {
+    const geocoder = new Geocoder(
+      {},
+      getGeocoderInterface(),
+      MockCache
+    );
 
     should.exist(geocoder);
   });
 
+  it('should create a cache', function() {
+    const mackCacheFileName = 'a file name',
+      mockCacheConstructor = sinon.stub();
+
+    class NewMockCache extends MockCache {
+      constructor(fileName) {
+        super();
+        mockCacheConstructor(fileName);
+      }
+    }
+
+    const geocoder = new Geocoder( // eslint-disable-line
+      {cacheFile: mackCacheFileName},
+      getGeocoderInterface(),
+      NewMockCache
+    );
+
+    sinon.assert.calledWith(mockCacheConstructor, mackCacheFileName);
+  });
+
   it('should accept a client ID and a private key', function() {
-    const geocoder = new Geocoder({
-      clientId: 'dummy',
-      privateKey: 'dummy'
-    });
+    const geocoder = new Geocoder(
+      {clientId: 'dummy', privateKey: 'dummy'},
+      getGeocoderInterface(),
+      MockCache
+    );
 
     should.exist(geocoder);
   });
 
   it('should throw an error when there is only the client id', function() {
-    should(function() {
-      const geocoder = new Geocoder({ // eslint-disable-line
-        clientId: 'dummy'
-      });
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line
+        {clientId: 'dummy'},
+        getGeocoderInterface(),
+        MockCache
+      );
     }).throw('Missing privateKey');
   });
 
   it('should throw an error when there is only the private key', function() {
     should(function() {
-      const geocoder = new Geocoder({ // eslint-disable-line
-        privateKey: 'dummy'
-      });
+      const geocoder = new Geocoder(// eslint-disable-line
+        {privateKey: 'dummy'},
+        getGeocoderInterface(),
+        MockCache
+      );
     }).throw('Missing clientId');
   });
 
-  it('should return a promise from the geocodeAddress function', function() {
-    const geocoder = new Geocoder();
+  it('should return a promise from the geocodeAddress function', () => {
+    const geocodeFunction = getGeocodeFunction({error: 'error'});
+
+    const geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {},
+        geoCoderInterface,
+        MockCache
+      );
 
     geocoder.geocodeAddress('Hamburg').should.be.a.Promise;
   });
 
-  it('should reject when geocoding with false id or key', function(done) {
-    const geocoder = new Geocoder({
-        clientId: 'dummy',
-        privateKey: 'dummy'
-      }),
-      address = 'Hamburg';
+  it('should call geocode function on geocodeAddress with correct parameter',
+    function(done) {
+      const mockAddress = 'anAddress',
+        geocodeFunction = getGeocodeFunction({results: ['some result']}),
+        geoCoderInterface = getGeocoderInterface(geocodeFunction),
+        geocoder = new Geocoder(
+          {
+            clientId: 'dummy',
+            privateKey: 'dummy'
+          },
+          geoCoderInterface,
+          MockCache
+        );
 
-    geocoder.geocodeAddress(address).catch(error => {
-      should(error).be.an.Error;
-      should(error.message).equal('Wrong clientId or privateKey');
-      done();
-    });
+      geocoder.geocodeAddress(mockAddress)
+        .then(() => {
+          sinon.assert.calledWith(geocodeFunction, mockAddress);
+        })
+        .then(done, done);
+    }
+  );
+
+  it('should throw error when geocoder returns error', function(done) {
+    const mockAddress = 'Hamburg',
+      geocodeFunction = getGeocodeFunction({error: 'error'}),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {
+          clientId: 'dummy',
+          privateKey: 'dummy'
+        },
+        geoCoderInterface,
+        MockCache);
+
+    geocoder.geocodeAddress(mockAddress)
+      .catch(error => {
+        should(error).be.an.Error;
+        should(error.message).equal('Wrong clientId or privateKey');
+      })
+      .then(done, done);
   });
 
   it('should geocode an address', function(done) {
-    const geocoder = new Geocoder(),
-      address = 'Hamburg';
+    const mockAddress = 'Hamburg',
+      geoCoderResult = ['mockResult'],
+      expectedResult = geoCoderResult[0],
+      geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {},
+        geoCoderInterface,
+        MockCache
+      );
 
-    geocoder.geocodeAddress(address).then(function(result) {
-      should(result.address_components).be.an.Array;
-      should(result.formatted_address).be.a.String;
-      should(result.geometry.location).be.an.object;
-      should(result.geometry.location).have.keys('lat', 'lng');
-      should(result.geometry.location.lat).be.above(53);
-      should(result.geometry.location.lat).be.below(54);
-      should(result.geometry.location.lng).be.above(9);
-      should(result.geometry.location.lng).be.below(10);
-      done();
-    });
+    geocoder.geocodeAddress(mockAddress)
+      .then(result => {
+        should(result).equal(expectedResult);
+      })
+      .then(done, done);
   });
 
   it('should cache a geocode', function(done) {
-    const geocoder = new Geocoder(),
-      address = 'Hamburg',
-      geocode = geocoder.geocodeAddress(address);
+    const mockAddress = 'anAddress',
+      geoCoderResult = ['mockResult'],
+      geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      addFunction = sinon.stub();
 
-    geocode.then(function() {
-      const cacheFileContent = fs.readFileSync('geocache.db', {
-        encoding: 'utf8'
-      });
+    class NewMockCache extends MockCache {
+      add(key, value) {
+        addFunction(key, value);
+      }
+    }
 
-      setTimeout(() => {
-        should(cacheFileContent).match(/"Hamburg"/);
-        done();
-      }, 200);
-    });
+    const geocoder = new Geocoder(
+        {},
+        geoCoderInterface,
+        NewMockCache
+      ),
+      geocode = geocoder.geocodeAddress(mockAddress);
+
+    geocode
+      .then(function() {
+        sinon.assert.calledWith(addFunction, mockAddress, geoCoderResult[0]);
+      })
+      .then(done, done);
   });
 
   it('should use the cached version if it exists', function(done) {
-    const db = flatfile.sync('geocache.db'),
-      dummyAddress = 'Dummy',
-      dummyLocation = {
-        lat: 1,
-        lng: 2
-      };
+    const mockAddress = 'anAddress',
+      cachedResult = 'a result from the cache',
+      geoCoderResult = ['mockResult'],
+      geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction);
 
-    db.put(dummyAddress, dummyLocation, () => {
-      const geocoder = new Geocoder();
+    class NewMockCache extends MockCache {
+      get() {
+        return cachedResult;
+      }
+    }
 
-      geocoder.geocodeAddress(dummyAddress).then(function(result) {
-        should.deepEqual(dummyLocation, result);
-        db.close();
-        done();
-      });
-    });
+    const geocoder = new Geocoder(
+        {},
+        geoCoderInterface,
+        NewMockCache
+      ),
+      geocode = geocoder.geocodeAddress(mockAddress);
+
+    geocode
+      .then(result => {
+        should(result).equal(cachedResult);
+      })
+      .then(done, done);
   });
 
   it('should return an error when no result is found', function(done) {
-    const geocoder = new Geocoder(),
-      address = 'My dummy location that does not exist!';
+    const mockAddress = 'My dummy location that does not exist!',
+      geocodeFunction = getGeocodeFunction({results: []}),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {},
+        geoCoderInterface,
+        MockCache
+      );
 
-    geocoder.geocodeAddress(address).catch(error => {
+    geocoder.geocodeAddress(mockAddress).catch(error => {
       should(error).be.an.Error;
       should(error.message).equal('No results found');
       done();

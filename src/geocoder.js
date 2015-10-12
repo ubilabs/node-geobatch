@@ -2,7 +2,7 @@
 
 import Cache from './cache';
 import isEmpty from 'amp-is-empty';
-import googlemaps from 'googlemaps';
+import GoogleGeocoder from './lib/google-geocoder';
 
 /**
  * Geocoder instance
@@ -14,7 +14,7 @@ export default class Geocoder {
    * Constructs a geocoder.
    * @param  {Object} options Geocoder options.
    */
-  constructor(options = {}) {
+  constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
     options.clientId = options.clientId || null;
     options.privateKey = options.privateKey || null;
 
@@ -33,11 +33,8 @@ export default class Geocoder {
     this.lastGeocode = new Date();
     this.currentRequests = 0;
 
-    this.cache = new Cache(options.cacheFile);
-    this.googlemaps = googlemaps;
-
-    this.googlemaps.config('google-client-id', options.clientId);
-    this.googlemaps.config('google-private-key', options.privateKey);
+    this.cache = new GeoCache(options.cacheFile);
+    this.geocoder = geocoder.init(options);
   }
 
   /**
@@ -60,7 +57,6 @@ export default class Geocoder {
    */
   startGeocode(address, resolve, reject) {
     const cachedAddress = this.cache.get(address);
-
     if (cachedAddress) {
       return resolve(cachedAddress);
     }
@@ -79,7 +75,7 @@ export default class Geocoder {
     this.currentRequests++;
     this.lastGeocode = now;
 
-    this.googlemaps.geocode(address.replace('\'', ''), (error, response) => {
+    this.geocoder.geocode(address.replace('\'', ''), (error, response) => {
       this.currentRequests--;
 
       if (error) {

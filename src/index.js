@@ -1,12 +1,7 @@
 /* eslint-disable one-var */
 
-<<<<<<< HEAD
 import intoStream from 'into-stream';
-import Geocoder from './geocoder';
-=======
-import ArrayStream from './array-stream';
 import StandardGeocoder from './geocoder';
->>>>>>> tests: refactor helpers test & add tests for geocode-stream
 import GeocodeStream from './geocode-stream';
 
 /**
@@ -28,13 +23,13 @@ export default class GeoBatch {
    * @return {Function} The stream
    */
   geocode(addresses) {
-    const arrayStream = new ArrayStream(addresses),
+    const arrayStream = intoStream.obj(addresses),
       stats = {
         total: addresses.length,
         current: 0,
         startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(this.geocoder, stats);
+      };
+    const geocodeStream = new GeocodeStream(this.geocoder, stats);
 
     arrayStream.pipe(geocodeStream);
 

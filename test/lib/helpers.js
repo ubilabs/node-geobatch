@@ -1,4 +1,5 @@
 import sinon from 'sinon';
+import GeocodeStream from '../../src/geocode-stream';
 
 /**
  * Returns a geocode function to be used in the geocoder.
@@ -8,7 +9,7 @@ import sinon from 'sinon';
  * @return {Function}         A stubbed function that calls the second argument
  *                              as a callback.
  */
-export default {
+const helpers = {
   getGeocodeFunction: ({status = '', results = '', error = ''}
       = {status: '', results: '', error: ''}) => {
     const geoCoderReponseObject = {
@@ -36,5 +37,22 @@ export default {
       };
     }};
     return geoCoderInterface;
+  },
+
+  getGeocodeStream: geocoderPromise => {
+    const newGeocodeAddressFunction = () => geocoderPromise,
+      GeoCoderInterface = helpers.getGeocoderInterface(
+        null,
+        newGeocodeAddressFunction
+      ),
+      geocoder = GeoCoderInterface.init(),
+      mockStats = {
+        current: 0,
+        total: 0,
+        startTime: new Date()
+      };
+    return new GeocodeStream(geocoder, mockStats);
   }
 };
+
+export default helpers;

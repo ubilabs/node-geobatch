@@ -1,10 +1,11 @@
-/* eslint-disable no-unused-expressions, max-nested-callbacks */
+/* eslint-disable no-unused-expressions, max-nested-callbacks,
+  no-underscore-dangle */
 import sinon from 'sinon';
 import should from 'should';
 import GeocodeStream from '../src/geocode-stream';
 import stream from 'stream';
 import Promise from 'lie';
-import {getGeocoderInterface} from './lib/helpers';
+import {getGeocodeStream, getGeocoderInterface} from './lib/helpers';
 
 import expected from 'unexpected';
 import expectedSinon from 'unexpected-sinon';
@@ -52,28 +53,14 @@ describe('Geocode Stream', () => {
       promise
         .then(() => {
           sinon.assert.calledWith(newGeocodeAddressFunction, 'test');
-          done();
         })
-        .catch(error => {
-          done(error);
-        });
-
+        .then(done, done);
     });
 
     it('call the \'done\' function when finishes succesfully', done => {
       const promise = Promise.resolve({geometry: {location: null}}),
-        newGeocodeAddressFunction = () => promise,
-        GeoCoderInterface = getGeocoderInterface(
-          null,
-          newGeocodeAddressFunction
-        ),
-        geocoder = GeoCoderInterface.init(),
-        mockStats = {
-          current: 0,
-          total: 0,
-          startTime: new Date()
-        },
-        geocodeStream = new GeocodeStream(geocoder, mockStats);
+        geocodeStream = getGeocodeStream(promise);
+
       const doneFunction = sinon.stub();
 
       geocodeStream._transform('test2', null, doneFunction);
@@ -87,18 +74,8 @@ describe('Geocode Stream', () => {
 
     it('call the \'done\' function when finishes with error', done => {
       const promise = Promise.reject(new Error('error')),
-        newGeocodeAddressFunction = () => promise,
-        GeoCoderInterface = getGeocoderInterface(
-          null,
-          newGeocodeAddressFunction
-        ),
-        geocoder = GeoCoderInterface.init(),
-        mockStats = {
-          current: 0,
-          total: 0,
-          startTime: new Date()
-        },
-        geocodeStream = new GeocodeStream(geocoder, mockStats);
+        geocodeStream = getGeocodeStream(promise);
+
       const doneFunction = sinon.stub();
 
       geocodeStream._transform('test2', null, doneFunction);
@@ -116,18 +93,7 @@ describe('Geocode Stream', () => {
         geometry: {location: 2}
       },
       promise = Promise.resolve(mockGeocoderResult),
-      newGeocodeAddressFunction = () => promise,
-      GeoCoderInterface = getGeocoderInterface(
-        null,
-        newGeocodeAddressFunction
-      ),
-      geocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(geocoder, mockStats);
+      geocodeStream = getGeocodeStream(promise);
 
     mockStream
       .pipe(geocodeStream)
@@ -145,18 +111,7 @@ describe('Geocode Stream', () => {
         geometry: {location: 2}
       },
       promise = Promise.resolve(mockGeocoderResult),
-      newGeocodeAddressFunction = () => promise,
-      GeoCoderInterface = getGeocoderInterface(
-        null,
-        newGeocodeAddressFunction
-      ),
-      geocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(geocoder, mockStats);
+      geocodeStream = getGeocodeStream(promise);
 
     mockStream
       .pipe(geocodeStream)
@@ -174,18 +129,7 @@ describe('Geocode Stream', () => {
         geometry: {location: 2}
       },
       promise = Promise.resolve(mockGeocoderResult),
-      newGeocodeAddressFunction = () => promise,
-      GeoCoderInterface = getGeocoderInterface(
-        null,
-        newGeocodeAddressFunction
-      ),
-      geocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(geocoder, mockStats);
+      geocodeStream = getGeocodeStream(promise);
 
     mockStream
       .pipe(geocodeStream)
@@ -199,24 +143,10 @@ describe('Geocode Stream', () => {
 
   it('add error message on geocoder error', done => {
     const mockStream = intoStream.obj(['haus']),
-      mockGeocoderResult = {
-        geometry: {location: 2}
-      },
       mockErrorMessage = 'an error message',
       mockError = new Error(mockErrorMessage),
       promise = Promise.reject(mockError),
-      newGeocodeAddressFunction = () => promise,
-      GeoCoderInterface = getGeocoderInterface(
-        null,
-        newGeocodeAddressFunction
-      ),
-      geocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(geocoder, mockStats);
+      geocodeStream = getGeocodeStream(promise);
 
     mockStream
       .pipe(geocodeStream)
@@ -234,18 +164,7 @@ describe('Geocode Stream', () => {
         geometry: {location: 2}
       },
       promise = Promise.resolve(mockGeocoderResult),
-      newGeocodeAddressFunction = () => promise,
-      GeoCoderInterface = getGeocoderInterface(
-        null,
-        newGeocodeAddressFunction
-      ),
-      geocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      },
-      geocodeStream = new GeocodeStream(geocoder, mockStats);
+      geocodeStream = getGeocodeStream(promise);
 
     mockStream
       .pipe(geocodeStream)

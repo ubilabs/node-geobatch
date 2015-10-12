@@ -14,7 +14,7 @@ export default class Geocoder {
    * Constructs a geocoder.
    * @param  {Object} options Geocoder options.
    */
-  constructor(options = {}, geoCoder = GoogleGeocoder, GeoCache = Cache) {
+  constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
     options.clientId = options.clientId || null;
     options.privateKey = options.privateKey || null;
 
@@ -34,7 +34,7 @@ export default class Geocoder {
     this.currentRequests = 0;
 
     this.cache = new GeoCache(options.cacheFile);
-    this.googlemaps = geoCoder.init(options);
+    this.geocoder = geocoder.init(options);
   }
 
   /**
@@ -75,7 +75,7 @@ export default class Geocoder {
     this.currentRequests++;
     this.lastGeocode = now;
 
-    this.googlemaps.geocode(address.replace('\'', ''), (error, response) => {
+    this.geocoder.geocode(address.replace('\'', ''), (error, response) => {
       this.currentRequests--;
 
       if (error) {

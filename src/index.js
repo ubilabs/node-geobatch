@@ -19,7 +19,8 @@ export default class GeoBatch {
     {cacheFile = 'geocache.db', clientId = null, privateKey = null}
       = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
     Geocoder = StandardGeocoder,
-    GeocodeStream = StandardGeocodeStream) {
+    GeocodeStream = StandardGeocodeStream
+  ) {
     this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
     this.GeocodeStream = GeocodeStream;
   }
@@ -47,9 +48,9 @@ export default class GeoBatch {
    * @return {Stream}        A transformable stream.
    */
   geocodeStream(stream, stats = {}) {
-    const streamGeocoder = new this.GeocodeStream(this.geocoder, stats);
-    stream.pipe(streamGeocoder);
+    const geocodeStream = new this.GeocodeStream(this.geocoder, stats);
+    stream.pipe(geocodeStream);
 
-    return streamGeocoder;
+    return geocodeStream;
   }
 }

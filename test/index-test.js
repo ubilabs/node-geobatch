@@ -1,36 +1,21 @@
 /* eslint-disable no-unused-expressions, one-var */
 import should from 'should';
-import fs from 'fs';
 import GeoBatch from '../src/index.js';
 import assert from 'assert';
 import sinon from 'sinon';
+import streamAssert from 'stream-assert';
+import stream from 'stream';
+import intoStream from 'into-stream';
 
 assert.called = sinon.assert.called;
 assert.calledWith = sinon.assert.calledWith;
 
-// class MockCache {
-//   constructor() {}
-//   get() {}
-//   add() {}
-// }
-
-describe('Testing index', function() {
-  afterEach(function(done) {
-    fs.exists('geocache.db', function(exists) {
-      if (exists) {
-        fs.unlinkSync('geocache.db');
-      }
-
-      setTimeout(done, 500);
-    });
-  });
-
+describe('Testing GeoBatch', () => {
   it('should create a new instance when called without params', function() {
     const geoBatch = new GeoBatch();
 
     should.exist(geoBatch);
   });
-
 
   it('should accept a clientId and a privateKey', function() {
     /* eslint-disable no-unused-vars */
@@ -60,151 +45,64 @@ describe('Testing index', function() {
     }
   );
 
-  it('blocker', () => {
-    assert(false);
+  it('should call geocodeStream with correct stats when called with array',
+    () => {
+      const geoBatch = new GeoBatch(),
+        geocodeStreamFunction = sinon.stub(),
+        mockAddressArray = ['mock address'],
+        expectedTotal = mockAddressArray.length,
+        expectedCurrent = 0;
+      geoBatch.geocodeStream = geocodeStreamFunction;
+
+      geoBatch.geocode(mockAddressArray);
+      const SecondGeocodeStreamArguments = geocodeStreamFunction.args[0][1];
+      should(SecondGeocodeStreamArguments.total).equal(expectedTotal);
+      should(SecondGeocodeStreamArguments.current).equal(expectedCurrent);
+      should(SecondGeocodeStreamArguments.startTime).be.instanceof(Date);
+    }
+  );
+
+  it('should transform an array to stream and pass it to geocodeStream', () => {
+    const geoBatch = new GeoBatch(),
+      geocodeStreamFunction = sinon.stub(),
+      mockAddressArray = ['mock address'],
+      expectedTotal = mockAddressArray.length,
+      expectedCurrent = 0;
+    geoBatch.geocodeStream = geocodeStreamFunction;
+
+    geoBatch.geocode(mockAddressArray);
+    const FirstGeocodeStreamArguments = geocodeStreamFunction.args[0][0];
+    // Check for instance of stream.
+    should(FirstGeocodeStreamArguments).be.instanceof(stream);
+
+    // Check if first element of stream is equal to input.
+    FirstGeocodeStreamArguments
+      .pipe(streamAssert.first(mockAddressArray[0]));
   });
 
-  it('should geocode addresses',
-    function(done) {
-      const geoBatch = new GeoBatch();
-
-      let geocodeResponses = 0,
-        found = {
-          Hamburg: false,
-          Berlin: false
-        };
-
-      geoBatch.geocode(['Hamburg', 'Berlin'])
-        .on('data', function(data) {
-          should(data).be.an.Object;
-          should(data.address).be.a.String;
-          should(data.result.geometry.location).be.an.Object;
-          should(data.result.geometry.location.lat).be.a.Number;
-          should(data.result.geometry.location.lng).be.a.Number;
-          should(data.location).be.an.Object;
-          should(data.location.lat).be.a.Number;
-          should(data.location.lng).be.a.Number;
-          should(data.error).be.null;
-          found[data.address] = true;
-          geocodeResponses++;
-        })
-        .on('end', function() {
-          should.equal(geocodeResponses, 2);
-          should(found.Hamburg).be.true;
-          should(found.Berlin).be.true;
-          done();
-        });
+  it('geocodeStream should pipe geocoder stream', done => {
+    // Create a mock geocode-stream class that passes elements unchanged.
+    class mockGeocodeStream extends stream.Transform {
+      constructor() {
+        super({objectMode: true});
+      }
+      _transform(item, encoding, done) { // eslint-disable-line
+        this.push(item);
+        done();
+      }
     }
-  );
+    const mockGeoCoder = sinon.stub(),
+      geoBatch = new GeoBatch({}, mockGeoCoder, mockGeocodeStream),
+      mockAddress = 'some address',
+      input = intoStream.obj([mockAddress]),
+      resultStream = geoBatch.geocodeStream(input);
 
-  it('should return an error when geocoding of addresses fails',
-    function(done) {
-      const geoBatch = new GeoBatch();
-
-      geoBatch.geocode(['My dummy location that does not exist!'])
-        .on('data', function(data) {
-          should(data.error).be.a.String;
-          should(data.error).equal('No results found');
-        })
-        .on('end', function() {
-          done();
-        });
-    }
-  );
-
-  it('should return some info about the geocoding process',
-    function(done) {
-      const geoBatch = new GeoBatch();
-
-      geoBatch.geocode(['Hamburg', 'Berlin'])
-        .on('data', function(data) {
-          should(data.pending).be.a.Number;
-          should(data.total).be.a.Number;
-          should(data.current).be.a.Number;
-          should(data.percent).be.a.Number;
-          should(data.estimatedDuration).be.a.Number;
-          should(data.total).equal(2);
-          should(data.estimatedDuration).not.equal(0);
-          if (data.address === 'Hamburg') {
-            should(data.pending).equal(1);
-            should(data.current).equal(1);
-            should(data.percent).equal(50);
-          }
-          if (data.address === 'Berlin') {
-            should(data.pending).equal(0);
-            should(data.current).equal(2);
-            should(data.percent).equal(100);
-          }
-        })
-        .on('end', function() {
-          done();
-        });
-    }
-  );
-
-  it('should handle multiple calls to geocode',
-    function(done) {
-      const geoBatch = new GeoBatch();
-
-      let finishedCalls = 0;
-
-      geoBatch.geocode(['Hamburg'])
-        .on('data', function(data) {
-          should(data.address).equal('Hamburg');
-        })
-        .on('end', function() {
-          finishedCalls++;
-
-          if (finishedCalls === 3) {
-            done();
-          }
-        });
-
-      geoBatch.geocode(['Munich'])
-        .on('data', function(data) {
-          should(data.address).equal('Munich');
-        })
-        .on('end', function() {
-          finishedCalls++;
-
-          if (finishedCalls === 3) {
-            done();
-          }
-        });
-
-      geoBatch.geocode(['Leipzig'])
-        .on('data', function(data) {
-          should(data.address).equal('Leipzig');
-        })
-        .on('end', function() {
-          finishedCalls++;
-
-          if (finishedCalls === 3) {
-            done();
-          }
-        });
-    }
-  );
-
-  it('should limit the geocoding calls to not run into API limits',
-    function(done) {
-      const geoBatch = new GeoBatch();
-
-      this.timeout(15000);  // eslint-disable-line
-
-      geoBatch.geocode([
-        'Hamburg', 'Berlin', 'Leipzig', 'Stuttgart', 'Munich', 'Cologne',
-        'Bremen', 'Rostock', 'Freiburg', 'Frankfurt', 'Dresden', 'Karlsruhe',
-        'Halle', 'Flensburg', 'Dortmund', 'Ulm', 'Kiel', 'Erlangen', 'Moskau',
-        'New York', 'Rio de Janeiro', 'Tokyo', 'Lima', 'Quito', 'Montevideo'
-      ])
-        .on('data', function(data) {
-          should(data.error).be.null;
-          should(data.result).be.an.Object;
-        })
-        .on('end', function() {
-          done();
-        });
-    }
-  );
+    resultStream
+      .pipe(streamAssert.first(item => {
+        should(item).equal(mockAddress);
+      }))
+      .pipe(streamAssert.end(error => {
+        done(error);
+      }));
+  });
 });

@@ -2,7 +2,7 @@
 
 import intoStream from 'into-stream';
 import StandardGeocoder from './geocoder';
-import GeocodeStream from './geocode-stream';
+import StandardGeocodeStream from './geocode-stream';
 
 /**
  * GeoBatch instance
@@ -13,8 +13,10 @@ export default class GeoBatch {
   constructor(
     {cacheFile = 'geocache.db', clientId = null, privateKey = null}
       = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
-    Geocoder = StandardGeocoder) {
+    Geocoder = StandardGeocoder,
+    GeocodeStream = StandardGeocodeStream) {
     this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
+    this.GeocodeStream = GeocodeStream;
   }
 
   /**
@@ -29,10 +31,20 @@ export default class GeoBatch {
         current: 0,
         startTime: new Date()
       };
-    const geocodeStream = new GeocodeStream(this.geocoder, stats);
 
-    arrayStream.pipe(geocodeStream);
+    return this.geocodeStream(arrayStream, stats);
+  }
 
-    return geocodeStream;
+  /**
+   * Geocode the elements of a passed in stream.
+   * @param  {Stream} stream An input stream
+   * @param  {Object} stats  An object with the stream stats, defaults to {}.
+   * @return {Stream}        A transformable stream.
+   */
+  geocodeStream(stream, stats = {}) {
+    const streamGeocoder = new this.GeocodeStream(this.geocoder, stats);
+    stream.pipe(streamGeocoder);
+
+    return streamGeocoder;
   }
 }

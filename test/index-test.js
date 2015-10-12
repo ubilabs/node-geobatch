@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-expressions, one-var */
-import should from 'should';
-import GeoBatch from '../src/index.js';
-import assert from 'assert';
-import sinon from 'sinon';
-import streamAssert from 'stream-assert';
 import stream from 'stream';
 import intoStream from 'into-stream';
 
-assert.called = sinon.assert.called;
-assert.calledWith = sinon.assert.calledWith;
+import should from 'should';
+import sinon from 'sinon';
+import streamAssert from 'stream-assert';
+
+import GeoBatch from '../src/index.js';
 
 describe('Testing GeoBatch', () => {
   it('should create a new instance when called without params', function() {
@@ -28,7 +26,7 @@ describe('Testing GeoBatch', () => {
     expectedOptions.clientId = 'a clientID';
     expectedOptions.privateKey = 'a privateKey';
 
-    assert.calledWith(MockGeoCoder, expectedOptions);
+    sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });
 
   it('should have a geocode function that accepts and returns a stream',
@@ -55,10 +53,11 @@ describe('Testing GeoBatch', () => {
       geoBatch.geocodeStream = geocodeStreamFunction;
 
       geoBatch.geocode(mockAddressArray);
-      const SecondGeocodeStreamArguments = geocodeStreamFunction.args[0][1];
-      should(SecondGeocodeStreamArguments.total).equal(expectedTotal);
-      should(SecondGeocodeStreamArguments.current).equal(expectedCurrent);
-      should(SecondGeocodeStreamArguments.startTime).be.instanceof(Date);
+      const argumentsStats = geocodeStreamFunction.args[0][1];
+
+      should(argumentsStats.total).equal(expectedTotal);
+      should(argumentsStats.current).equal(expectedCurrent);
+      should(argumentsStats.startTime).be.instanceof(Date);
     }
   );
 
@@ -71,12 +70,12 @@ describe('Testing GeoBatch', () => {
     geoBatch.geocodeStream = geocodeStreamFunction;
 
     geoBatch.geocode(mockAddressArray);
-    const FirstGeocodeStreamArguments = geocodeStreamFunction.args[0][0];
+    const inputStream = geocodeStreamFunction.args[0][0];
     // Check for instance of stream.
-    should(FirstGeocodeStreamArguments).be.instanceof(stream);
+    should(inputStream).be.instanceof(stream);
 
     // Check if first element of stream is equal to input.
-    FirstGeocodeStreamArguments
+    inputStream
       .pipe(streamAssert.first(mockAddressArray[0]));
   });
 

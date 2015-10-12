@@ -7,7 +7,12 @@ import StandardGeocodeStream from './geocode-stream';
 /**
  * GeoBatch instance
  * @type {Function}
- * @param {Object} options The options for the GeoBatch
+ * @param {Object} options The options for the GeoBatch, default is
+ *                         {cacheFile: 'geocache.db',
+ *                           clientId: null,
+ *                           privateKey: null}
+ * @param {Object} Geocoder A geocoder.
+ * @param {Object} GeocodeStream A GeocodeStream.
  */
 export default class GeoBatch {
   constructor(

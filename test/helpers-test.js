@@ -1,18 +1,21 @@
 /* eslint-disable no-unused-expressions */
-import assert from 'assert';
-import sinon from 'sinon';
-import should from 'should';
-import {getGeocodeFunction, getGeocoderInterface} from './lib/helpers';
+import stream from 'stream';
+import Promise from 'lie';
 
-assert.called = sinon.assert.called;
-assert.calledWith = sinon.assert.calledWith;
+import should from 'should';
+import sinon from 'sinon';
+
+import {
+  getGeocodeFunction,
+  getGeocoderInterface,
+  getGeocodeStream
+} from './lib/helpers';
 
 describe('Helper functions ', () => {
   describe('getGeocoderInterface', () => {
     it('should return a geocoder interface', () => {
       const geocoderInterface = getGeocoderInterface();
-
-      assert.equal(typeof geocoderInterface.init, 'function');
+      should(geocoderInterface.init).be.Function();
     });
 
     it(`should return a geocoder interface which returna geocoder with
@@ -21,7 +24,7 @@ describe('Helper functions ', () => {
           geocoderInterface = getGeocoderInterface(mockGeocodeFunction),
           geocoder = geocoderInterface.init(),
           geocodeFunction = geocoder.geocode;
-        assert.deepEqual(geocodeFunction, mockGeocodeFunction);
+        should(geocodeFunction).deepEqual(mockGeocodeFunction);
       }
     );
 
@@ -34,7 +37,8 @@ describe('Helper functions ', () => {
           ),
           geocoder = geocoderInterface.init(),
           geocodeAddressFunction = geocoder.geocodeAddress;
-        assert.deepEqual(geocodeAddressFunction, mockGeocodeAddressFunction);
+
+        should(geocodeAddressFunction).deepEqual(mockGeocodeAddressFunction);
       }
     );
   });
@@ -51,7 +55,7 @@ describe('Helper functions ', () => {
         callBack = sinon.stub();
 
       mockGeocodeFunction(null, callBack);
-      assert.called(callBack);
+      sinon.assert.called(callBack);
     });
 
     it('should take an error value', () => {
@@ -60,7 +64,7 @@ describe('Helper functions ', () => {
         callBack = sinon.stub();
 
       mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, errorMessage);
+      sinon.assert.calledWith(callBack, errorMessage);
     });
 
     it('should take a results object', () => {
@@ -70,7 +74,7 @@ describe('Helper functions ', () => {
         expectedArgument = {status: '', results: mockResults};
 
       mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, '', expectedArgument);
+      sinon.assert.calledWith(callBack, '', expectedArgument);
     });
 
     it('should take a status object', () => {
@@ -80,7 +84,15 @@ describe('Helper functions ', () => {
         expectedArgument = {results: '', status: mockStatus};
 
       mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, '', expectedArgument);
+      sinon.assert.calledWith(callBack, '', expectedArgument);
+    });
+  });
+
+  describe('getGeocodeStream', () => {
+    it('should return a stream', () => {
+      const mockPromise = Promise.resolve();
+      const test = getGeocodeStream(mockPromise);
+      should(test).be.instanceof(stream);
     });
   });
 });

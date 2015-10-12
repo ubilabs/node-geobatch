@@ -1,12 +1,8 @@
 /* eslint-disable no-unused-expressions, one-var, max-nested-callbacks */
 import should from 'should';
 import Geocoder from '../src/geocoder.js';
-import assert from 'assert';
 import sinon from 'sinon';
 import {getGeocodeFunction, getGeocoderInterface} from './lib/helpers';
-
-assert.called = sinon.assert.called;
-assert.calledWith = sinon.assert.calledWith;
 
 class MockCache {
   constructor() {}
@@ -42,7 +38,7 @@ describe('Testing geocoder', function() {
       NewMockCache
     );
 
-    assert.calledWith(mockCacheConstructor, mackCacheFileName);
+    sinon.assert.calledWith(mockCacheConstructor, mackCacheFileName);
   });
 
   it('should accept a client ID and a private key', function() {
@@ -104,12 +100,9 @@ describe('Testing geocoder', function() {
 
       geocoder.geocodeAddress(mockAddress)
         .then(() => {
-          assert.calledWith(geocodeFunction, mockAddress);
-          done();
+          sinon.assert.calledWith(geocodeFunction, mockAddress);
         })
-        .catch(error => {
-          done(error);
-        });
+        .then(done, done);
     }
   );
 
@@ -129,16 +122,14 @@ describe('Testing geocoder', function() {
       .catch(error => {
         should(error).be.an.Error;
         should(error.message).equal('Wrong clientId or privateKey');
-        done();
       })
-      .catch(error => {
-        done(error);
-      });
+      .then(done, done);
   });
 
   it('should geocode an address', function(done) {
     const mockAddress = 'Hamburg',
       geoCoderResult = ['mockResult'],
+      expectedResult = geoCoderResult[0],
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
@@ -148,13 +139,10 @@ describe('Testing geocoder', function() {
       );
 
     geocoder.geocodeAddress(mockAddress)
-      .then(function(result) {
-        assert.equal(geoCoderResult, result);
-        done();
+      .then(result => {
+        should(result).equal(expectedResult);
       })
-      .catch(error => {
-        done(error);
-      });
+      .then(done, done);
   });
 
   it('should cache a geocode', function(done) {
@@ -179,12 +167,9 @@ describe('Testing geocoder', function() {
 
     geocode
       .then(function() {
-        assert.calledWith(addFunction, mockAddress, geoCoderResult[0]);
-        done();
+        sinon.assert.calledWith(addFunction, mockAddress, geoCoderResult[0]);
       })
-      .catch(error => {
-        done(error);
-      });
+      .then(done, done);
   });
 
   it('should use the cached version if it exists', function(done) {
@@ -209,12 +194,9 @@ describe('Testing geocoder', function() {
 
     geocode
       .then(result => {
-        assert.equal(result, cachedResult);
-        done();
+        should(result).equal(cachedResult);
       })
-      .catch(error => {
-        done(error);
-      });
+      .then(done, done);
   });
 
   it('should return an error when no result is found', function(done) {

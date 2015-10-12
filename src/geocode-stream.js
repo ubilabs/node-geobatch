@@ -8,11 +8,13 @@ export default class GeocodeStream extends stream.Transform {
   /**
    * Constructs a geocodeStream.
    * @param  {Object} geocoder A geocoder.
+   * @param  {Object} stats A statistics object.
    */
-  constructor(geocoder) {
+  constructor(geocoder, stats) {
     super({objectMode: true});
 
     this.geocoder = geocoder;
+    this.stats = stats;
   }
 
   /**
@@ -25,7 +27,6 @@ export default class GeocodeStream extends stream.Transform {
     this.geocoder.geocodeAddress(address)
       .then(result => {
         let data = this.getMetaInfo(address);
-
         data.result = result;
         data.location = result.geometry.location;
         this.push(data);
@@ -50,7 +51,6 @@ export default class GeocodeStream extends stream.Transform {
 
     const now = new Date(),
       ratio = this.stats.current / this.stats.total;
-
     return {
       error: null,
       address: address,

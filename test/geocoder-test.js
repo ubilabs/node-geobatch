@@ -3,6 +3,7 @@ import should from 'should';
 import Geocoder from '../src/geocoder.js';
 import assert from 'assert';
 import sinon from 'sinon';
+import {getGeocodeFunction, getGeocoderInterface} from './lib/helpers';
 
 assert.called = sinon.assert.called;
 assert.calledWith = sinon.assert.calledWith;
@@ -13,110 +14,11 @@ class MockCache {
   add() {}
 }
 
-/**
- * Returns a geocode function to be used in the geocoder.
- * @param  {Object} status The status of the geocode repsonse
- * @param  {Object} results The results of the geocode response
- * @param  {Object} error  The error message of the geocode response
- * @return {Function}         A stubbed function that calls the second argument
- *                              as a callback.
- */
-function getGeocodeFunction(
-  {status = '', results = '', error = ''}
-    = {status: '', results: '', error: ''}) {
-  const geoCoderReponseObject = {
-    status,
-    results
-  };
-  return sinon.stub()
-    .callsArgWith(1, error, geoCoderReponseObject);
-}
-
-/**
- * Returns a geocoder interface. The init function returns a geocoder that
- * exposes a geocode function.
- * @param  {Function} geocodeFunction The geocode function to be exposed.
- * @return {Object}                 A geocoder interface object.
- */
-function getGeocoder(geocodeFunction) {
-  let geoCoderInterface = {init: () => {}};
-
-  if (geocodeFunction) {
-    geoCoderInterface.init = () => {
-      return {
-        geocode: geocodeFunction
-      };
-    };
-  }
-  return geoCoderInterface;
-}
-
-describe('Helper functions ', () => {
-  describe('getGeocoder', () => {
-    it('should return a geocoder interface', () => {
-      const geocoderInterface = getGeocoder();
-
-      assert.equal(typeof geocoderInterface.init, 'function');
-    });
-
-    it(`should return a geocoder interface which returna geocoder with
-      a given geocode function`, () => {
-        const mockGeocodeFunction = () => {},
-          geocoderInterface = getGeocoder(mockGeocodeFunction),
-          geocoder = geocoderInterface.init(),
-          geocodeFunction = geocoder.geocode;
-        assert.deepEqual(geocodeFunction, mockGeocodeFunction);
-      }
-    );
-  });
-
-  describe('getGeocodeFunction', () => {
-    it('should return a default geocode function', () => {
-      const mockGeocodeFunction = getGeocodeFunction();
-
-      assert.equal(typeof mockGeocodeFunction, 'function');
-    });
-    it('should cal callback', () => {
-      const mockGeocodeFunction = getGeocodeFunction(),
-        callBack = sinon.stub();
-
-      mockGeocodeFunction(null, callBack);
-      assert.called(callBack);
-    });
-    it('should take an error value', () => {
-      const errorMessage = 'an Error',
-        mockGeocodeFunction = getGeocodeFunction({error: errorMessage}),
-        callBack = sinon.stub();
-
-      mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, errorMessage);
-    });
-    it('should take a results object', () => {
-      const mockResults = 'some results',
-        mockGeocodeFunction = getGeocodeFunction({results: mockResults}),
-        callBack = sinon.stub(),
-        expectedArgument = {status: '', results: mockResults};
-
-      mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, '', expectedArgument);
-    });
-    it('should take a status object', () => {
-      const mockStatus = 'some status',
-        mockGeocodeFunction = getGeocodeFunction({status: mockStatus}),
-        callBack = sinon.stub(),
-        expectedArgument = {results: '', status: mockStatus};
-
-      mockGeocodeFunction(null, callBack);
-      assert.calledWith(callBack, '', expectedArgument);
-    });
-  });
-});
-
 describe('Testing geocoder', function() {
   it('should create a new instance when called without options', function() {
     const geocoder = new Geocoder(
       {},
-      getGeocoder(),
+      getGeocoderInterface(),
       MockCache
     );
 
@@ -136,7 +38,7 @@ describe('Testing geocoder', function() {
 
     const geocoder = new Geocoder( // eslint-disable-line
       {cacheFile: mackCacheFileName},
-      getGeocoder(),
+      getGeocoderInterface(),
       NewMockCache
     );
 
@@ -146,7 +48,7 @@ describe('Testing geocoder', function() {
   it('should accept a client ID and a private key', function() {
     const geocoder = new Geocoder(
       {clientId: 'dummy', privateKey: 'dummy'},
-      getGeocoder(),
+      getGeocoderInterface(),
       MockCache
     );
 
@@ -157,7 +59,7 @@ describe('Testing geocoder', function() {
     should(() => {
       const geocoder = new Geocoder( // eslint-disable-line
         {clientId: 'dummy'},
-        getGeocoder(),
+        getGeocoderInterface(),
         MockCache
       );
     }).throw('Missing privateKey');
@@ -167,7 +69,7 @@ describe('Testing geocoder', function() {
     should(function() {
       const geocoder = new Geocoder(// eslint-disable-line
         {privateKey: 'dummy'},
-        getGeocoder(),
+        getGeocoderInterface(),
         MockCache
       );
     }).throw('Missing clientId');
@@ -176,7 +78,7 @@ describe('Testing geocoder', function() {
   it('should return a promise from the geocodeAddress function', () => {
     const geocodeFunction = getGeocodeFunction({error: 'error'});
 
-    const geoCoderInterface = getGeocoder(geocodeFunction),
+    const geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
         {},
         geoCoderInterface,
@@ -190,7 +92,7 @@ describe('Testing geocoder', function() {
     function(done) {
       const mockAddress = 'anAddress',
         geocodeFunction = getGeocodeFunction({results: ['some result']}),
-        geoCoderInterface = getGeocoder(geocodeFunction),
+        geoCoderInterface = getGeocoderInterface(geocodeFunction),
         geocoder = new Geocoder(
           {
             clientId: 'dummy',
@@ -214,7 +116,7 @@ describe('Testing geocoder', function() {
   it('should throw error when geocoder returns error', function(done) {
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({error: 'error'}),
-      geoCoderInterface = getGeocoder(geocodeFunction),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
         {
           clientId: 'dummy',
@@ -238,7 +140,7 @@ describe('Testing geocoder', function() {
     const mockAddress = 'Hamburg',
       geoCoderResult = ['mockResult'],
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
-      geoCoderInterface = getGeocoder(geocodeFunction),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
         {},
         geoCoderInterface,
@@ -259,7 +161,7 @@ describe('Testing geocoder', function() {
     const mockAddress = 'anAddress',
       geoCoderResult = ['mockResult'],
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
-      geoCoderInterface = getGeocoder(geocodeFunction),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
       addFunction = sinon.stub();
 
     class NewMockCache extends MockCache {
@@ -290,7 +192,7 @@ describe('Testing geocoder', function() {
       cachedResult = 'a result from the cache',
       geoCoderResult = ['mockResult'],
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
-      geoCoderInterface = getGeocoder(geocodeFunction);
+      geoCoderInterface = getGeocoderInterface(geocodeFunction);
 
     class NewMockCache extends MockCache {
       get() {
@@ -318,7 +220,7 @@ describe('Testing geocoder', function() {
   it('should return an error when no result is found', function(done) {
     const mockAddress = 'My dummy location that does not exist!',
       geocodeFunction = getGeocodeFunction({results: []}),
-      geoCoderInterface = getGeocoder(geocodeFunction),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
         {},
         geoCoderInterface,

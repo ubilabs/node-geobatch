@@ -2,6 +2,17 @@
 import should from 'should';
 import fs from 'fs';
 import GeoBatch from '../src/index.js';
+import assert from 'assert';
+import sinon from 'sinon';
+
+assert.called = sinon.assert.called;
+assert.calledWith = sinon.assert.calledWith;
+
+// class MockCache {
+//   constructor() {}
+//   get() {}
+//   add() {}
+// }
 
 describe('Testing index', function() {
   afterEach(function(done) {
@@ -20,34 +31,19 @@ describe('Testing index', function() {
     should.exist(geoBatch);
   });
 
-  it('should accept a cachefile name', function(done) {
-    const geoBatch = new GeoBatch({
-      cacheFile: 'myPersonalGeocache.db'
-    });
-
-    should.exist(geoBatch);
-
-    fs.exists('myPersonalGeocache.db', function(exists) {
-      should(exists).be.true;
-      fs.unlinkSync('myPersonalGeocache.db');
-      done();
-    });
-  });
 
   it('should accept a clientId and a privateKey', function() {
     /* eslint-disable no-unused-vars */
-    should(function() {
-      const geoBatch = new GeoBatch({
-        privateKey: 'dummy'
-      });
-    }).throw('Missing clientId');
+    const MockGeoCoder = sinon.stub(),
+      expectedOptions =
+        {cacheFile: 'geocache.db', clientId: null, privateKey: null},
+      options = {clientId: 'a clientID', privateKey: 'a privateKey'},
+      geoBatch = new GeoBatch(options, MockGeoCoder);
 
-    should(function() {
-      const geoBatch = new GeoBatch({
-        clientId: 'dummy'
-      });
-    }).throw('Missing privateKey');
-    /* eslint-enable no-unused-vars */
+    expectedOptions.clientId = 'a clientID';
+    expectedOptions.privateKey = 'a privateKey';
+
+    assert.calledWith(MockGeoCoder, expectedOptions);
   });
 
   it('should have a geocode function that accepts and returns a stream',
@@ -63,6 +59,11 @@ describe('Testing index', function() {
         });
     }
   );
+
+  it('blocker', () => {
+    assert(false);
+  });
+
 
   it('should geocode addresses',
     function(done) {

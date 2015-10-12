@@ -1,7 +1,12 @@
 /* eslint-disable one-var */
 
+<<<<<<< HEAD
 import intoStream from 'into-stream';
 import Geocoder from './geocoder';
+=======
+import ArrayStream from './array-stream';
+import StandardGeocoder from './geocoder';
+>>>>>>> tests: refactor helpers test & add tests for geocode-stream
 import GeocodeStream from './geocode-stream';
 
 /**
@@ -10,8 +15,10 @@ import GeocodeStream from './geocode-stream';
  * @param {Object} options The options for the GeoBatch
  */
 export default class GeoBatch {
-  constructor({cacheFile, clientId, privateKey} =
-    {cacheFile: 'geocache.db', clientId: null, privateKey: null}) {
+  constructor(
+    {cacheFile = 'geocache.db', clientId = null, privateKey = null}
+    = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
+    Geocoder = StandardGeocoder) {
     this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
   }
 
@@ -21,14 +28,14 @@ export default class GeoBatch {
    * @return {Function} The stream
    */
   geocode(addresses) {
-    const arrayStream = intoStream.obj(addresses),
-      geocodeStream = new GeocodeStream(this.geocoder);
+    const arrayStream = new ArrayStream(addresses),
+      stats = {
+        total: addresses.length,
+        current: 0,
+        startTime: new Date()
+      },
+      geocodeStream = new GeocodeStream(this.geocoder, stats);
 
-    geocodeStream.stats = {
-      total: addresses.length,
-      current: 0,
-      startTime: new Date()
-    };
     arrayStream.pipe(geocodeStream);
 
     return geocodeStream;

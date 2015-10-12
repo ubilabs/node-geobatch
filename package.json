@@ -15,7 +15,7 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "prepublish": "npm run lint && npm run build",
-    "pretest": "npm run lint",
+    "xxxpretest": "npm run lint",
     "test": "mocha --compilers js:babel-core/register",
     "generatechangelog": "conventional-changelog-generator",
     "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
@@ -34,6 +34,7 @@
     "conventional-changelog-generator": "0.0.3",
     "eslint": "^1.6.0",
     "into-stream": "^2.0.0",
+    "lie": "^3.0.1",
     "mocha": "2.1.0",
     "release-it": "0.0.15",
     "should": "^5.0.1",

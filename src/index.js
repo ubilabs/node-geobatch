@@ -17,7 +17,7 @@ import GeocodeStream from './geocode-stream';
 export default class GeoBatch {
   constructor(
     {cacheFile = 'geocache.db', clientId = null, privateKey = null}
-    = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
+      = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
     Geocoder = StandardGeocoder) {
     this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
   }

@@ -129,7 +129,7 @@ describe('Testing geocoder', function() {
   it('should geocode an address', function(done) {
     const mockAddress = 'Hamburg',
       geoCoderResult = ['mockResult'],
-      expectedResult = geoCoderResult[0],
+      expectedResult = geoCoderResult,
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
@@ -167,7 +167,7 @@ describe('Testing geocoder', function() {
 
     geocode
       .then(function() {
-        sinon.assert.calledWith(addFunction, mockAddress, geoCoderResult[0]);
+        sinon.assert.calledWith(addFunction, mockAddress, geoCoderResult);
       })
       .then(done, done);
   });

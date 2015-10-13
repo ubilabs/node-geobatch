@@ -90,7 +90,7 @@ export default class Geocoder {
         return reject(new Error('No results found'));
       }
 
-      const result = response.results[0];
+      const result = response.results;
 
       this.cache.add(address, result);
       return resolve(result);

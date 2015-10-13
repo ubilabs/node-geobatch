@@ -27,8 +27,8 @@ export default class GeocodeStream extends stream.Transform {
     this.geocoder.geocodeAddress(address)
       .then(result => {
         let data = this.getMetaInfo(address);
-        data.result = result;
-        data.location = result.geometry.location;
+        data.result = result[0];
+        data.location = result[0].geometry.location;
         this.push(data);
         done();
       })

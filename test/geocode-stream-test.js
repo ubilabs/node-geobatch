@@ -53,7 +53,7 @@ describe('Geocode Stream', () => {
     });
 
     it('call the \'done\' function when finishes succesfully', done => {
-      const promise = Promise.resolve({geometry: {location: null}}),
+      const promise = Promise.resolve([{geometry: {location: null}}]),
         geocodeStream = getGeocodeStream(promise);
 
       const doneFunction = sinon.stub();
@@ -105,16 +105,17 @@ describe('Geocode Stream', () => {
 
     it('add geocoder result to result', done => {
       const mockStream = intoStream.obj(['mockAddress']),
-        mockGeocoderResult = {
+        mockGeocoderResult = [{
           geometry: {location: 2}
-        },
+        }],
+        expectedResult = mockGeocoderResult[0],
         promise = Promise.resolve(mockGeocoderResult),
         geocodeStream = getGeocodeStream(promise);
 
       mockStream
         .pipe(geocodeStream)
         .pipe(streamAssert.first(item => {
-          should(item.result).equal(mockGeocoderResult);
+          should(item.result).equal(expectedResult);
         }))
         .pipe(streamAssert.end(error => {
           done(error);
@@ -123,16 +124,17 @@ describe('Geocode Stream', () => {
 
     it('add geocoder result location to result', done => {
       const mockStream = intoStream.obj(['mockAddress']),
-        mockGeocoderResult = {
+        mockGeocoderResult = [{
           geometry: {location: 2}
-        },
+        }],
+        expectedLocation = mockGeocoderResult[0].geometry.location,
         promise = Promise.resolve(mockGeocoderResult),
         geocodeStream = getGeocodeStream(promise);
 
       mockStream
         .pipe(geocodeStream)
         .pipe(streamAssert.first(item => {
-          should(item.location).equal(mockGeocoderResult.geometry.location);
+          should(item.location).equal(expectedLocation);
         }))
         .pipe(streamAssert.end(error => {
           done(error);
@@ -141,9 +143,9 @@ describe('Geocode Stream', () => {
 
     it('set error to null', done => {
       const mockStream = intoStream.obj(['mockAddress']),
-        mockGeocoderResult = {
+        mockGeocoderResult = [{
           geometry: {location: 2}
-        },
+        }],
         promise = Promise.resolve(mockGeocoderResult),
         geocodeStream = getGeocodeStream(promise),
         expectedErrorMessage = null;

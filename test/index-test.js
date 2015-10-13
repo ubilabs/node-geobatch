@@ -29,6 +29,14 @@ describe('Testing GeoBatch', () => {
     sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });
 
+  it('should accept an accessor function', function() {
+    /* eslint-disable no-unused-vars */
+    const mockAccessor = sinon.stub(),
+      geoBatch = new GeoBatch({accessor: mockAccessor});
+
+    should(geoBatch.accessor).be.equal(mockAccessor);
+  });
+
   it('should have a geocode function that accepts and returns a stream',
     function(done) {
       const geoBatch = new GeoBatch();
@@ -79,6 +87,16 @@ describe('Testing GeoBatch', () => {
       .pipe(streamAssert.first(mockAddressArray[0]));
   });
 
+  it('should accept a stream into geocode and pass it on', () => {
+    const geoBatch = new GeoBatch(),
+      geocodeStreamFunction = sinon.stub(),
+      mockInputStream = intoStream.obj(['mock address']);
+    geoBatch.geocodeStream = geocodeStreamFunction;
+
+    geoBatch.geocode(mockInputStream);
+    sinon.assert.calledWith(geocodeStreamFunction, mockInputStream);
+  });
+
   it('geocodeStream should pipe geocoder stream', done => {
     // Create a mock geocode-stream class that passes elements unchanged.
     class mockGeocodeStream extends stream.Transform {
@@ -102,6 +120,37 @@ describe('Testing GeoBatch', () => {
       }))
       .pipe(streamAssert.end(error => {
         done(error);
+      }));
+  });
+
+  it('geocodeStream should pipe geocoder stream', done => {
+    const mockAccessor = sinon.stub();
+
+    // Create a mock geocode-stream class that passes elements unchanged.
+    class mockGeocodeStream extends stream.Transform {
+      constructor(geocoder, stats, accessor) {
+        super({objectMode: true});
+        should(accessor).equal(mockAccessor);
+        done();
+      }
+      _transform(item, encoding, done) { // eslint-disable-line
+        this.push(item);
+        done();
+      }
+    }
+    const mockGeoCoder = sinon.stub(),
+      geoBatch = new GeoBatch(
+        {accessor: mockAccessor},
+        mockGeoCoder,
+        mockGeocodeStream
+      ),
+      mockAddress = 'some address',
+      input = intoStream.obj([mockAddress]),
+      resultStream = geoBatch.geocodeStream(input);
+
+    resultStream
+      .pipe(streamAssert.first(item => {
+        should(item).equal(mockAddress);
       }));
   });
 });

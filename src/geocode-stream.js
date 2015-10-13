@@ -9,31 +9,36 @@ export default class GeocodeStream extends stream.Transform {
    * Constructs a geocodeStream.
    * @param  {Object} geocoder A geocoder.
    * @param  {Object} stats A statistics object.
+   * @param  {Function} accessor An accessor function that returns the address
+   *                             from the data item. The default returns the
+   *                             data item directly.
    */
-  constructor(geocoder, stats) {
+  constructor(geocoder, stats, accessor = address => address) {
     super({objectMode: true});
 
     this.geocoder = geocoder;
     this.stats = stats;
+    this.accessor = accessor;
   }
 
   /**
    * The _transform function for the stream.
-   * @param {String}   address The address to geocode
+   * @param {String}   input The address to geocode
    * @param {String}   encoding The encoding
    * @param {Function} done The done callback function
    */
-  _transform(address, encoding, done) { // eslint-disable-line
-    this.geocoder.geocodeAddress(address)
-      .then(result => {
-        let data = this.getMetaInfo(address);
-        data.result = result;
-        data.location = result.geometry.location;
+  _transform(input, encoding, done) { // eslint-disable-line
+    this.geocoder.geocodeAddress(this.accessor(input))
+      .then(results => {
+        let data = this.getMetaInfo(input);
+        data.result = results[0];
+        data.results = results;
+        data.location = results[0].geometry.location;
         this.push(data);
         done();
       })
       .catch(error => {
-        let data = this.getMetaInfo(address);
+        let data = this.getMetaInfo(input);
 
         data.error = error.message;
         this.push(data);
@@ -43,24 +48,32 @@ export default class GeocodeStream extends stream.Transform {
 
   /**
    * Get the result meta information
-   * @param {String} address The address
+   * @param {String} input The input
    * @return {Object} The meta information
    */
-  getMetaInfo(address) {
+  getMetaInfo(input) {
     this.stats.current++;
 
-    const now = new Date(),
-      ratio = this.stats.current / this.stats.total;
-    return {
+    let metaInfo = {
       error: null,
-      address: address,
+      address: this.accessor(input),
+      input: input,
       location: {},
       result: {},
-      total: this.stats.total,
-      current: this.stats.current,
-      pending: this.stats.total - this.stats.current,
-      percent: ratio * 100,
-      estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
+      current: this.stats.current
     };
+
+    if (this.stats.hasOwnProperty('total')) {
+      const now = new Date(),
+        ratio = this.stats.current / this.stats.total;
+
+      Object.assign(metaInfo, {
+        total: this.stats.total,
+        pending: this.stats.total - this.stats.current,
+        percent: ratio * 100,
+        estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
+      });
+    }
+    return metaInfo;
   }
 }

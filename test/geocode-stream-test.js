@@ -33,6 +33,13 @@ describe('Geocode Stream', () => {
     should(geocodeStream.stats).be.equal(mockStats);
   });
 
+  it('should take an accessor function', function() {
+    const mockAcessor = sinon.stub(),
+      geocodeStream = new GeocodeStream(null, null, mockAcessor);
+
+    should(geocodeStream.accessor).equal(mockAcessor);
+  });
+
   describe('_transform should', () => {
     it('send an address to the geocoder', done => {
       const promise = Promise.resolve(),
@@ -78,6 +85,27 @@ describe('Geocode Stream', () => {
       promise
         .catch(() => {
           sinon.assert.called(doneFunction);
+        })
+        .then(done, done);
+    });
+
+    it('apply accessor before passing the address to the geocoder', done => {
+      const mockAddress = 'an address',
+        mockInput = {address: mockAddress},
+        accessorFunction = item => item.address,
+        promise = Promise.resolve(),
+        newGeocodeAddressFunction = sinon.stub().returns(promise),
+        GeoCoderInterface = getGeocoderInterface(
+          null,
+          newGeocodeAddressFunction
+        ),
+        geocoder = GeoCoderInterface.init(),
+        geocodeStream = new GeocodeStream(geocoder, null, accessorFunction);
+
+      geocodeStream._transform(mockInput, null, null);
+      promise
+        .then(() => {
+          sinon.assert.calledWith(newGeocodeAddressFunction, mockAddress);
         })
         .then(done, done);
     });

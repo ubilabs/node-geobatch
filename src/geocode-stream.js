@@ -9,12 +9,16 @@ export default class GeocodeStream extends stream.Transform {
    * Constructs a geocodeStream.
    * @param  {Object} geocoder A geocoder.
    * @param  {Object} stats A statistics object.
+   * @param  {Function} accessor An accessor function that returns the address
+   *                             from the data item. The default returns the
+   *                             data item directly.
    */
-  constructor(geocoder, stats) {
+  constructor(geocoder, stats, accessor = address => address) {
     super({objectMode: true});
 
     this.geocoder = geocoder;
     this.stats = stats;
+    this.accessor = accessor;
   }
 
   /**
@@ -24,7 +28,7 @@ export default class GeocodeStream extends stream.Transform {
    * @param {Function} done The done callback function
    */
   _transform(address, encoding, done) { // eslint-disable-line
-    this.geocoder.geocodeAddress(address)
+    this.geocoder.geocodeAddress(this.accessor(address))
       .then(result => {
         let data = this.getMetaInfo(address);
         data.result = result[0];

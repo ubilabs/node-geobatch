@@ -18,11 +18,13 @@ export default class GeoBatch {
   constructor(
     {cacheFile = 'geocache.db', clientId = null, privateKey = null}
       = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
+    accessor = address => address,
     Geocoder = StandardGeocoder,
     GeocodeStream = StandardGeocodeStream
   ) {
     this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
     this.GeocodeStream = GeocodeStream;
+    this.accessor = accessor;
   }
 
   /**
@@ -48,7 +50,11 @@ export default class GeoBatch {
    * @return {Stream}        A transformable stream.
    */
   geocodeStream(stream, stats = {}) {
-    const geocodeStream = new this.GeocodeStream(this.geocoder, stats);
+    const geocodeStream = new this.GeocodeStream(
+      this.geocoder,
+      stats,
+      this.accessor
+    );
     stream.pipe(geocodeStream);
 
     return geocodeStream;

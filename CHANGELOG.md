@@ -1,3 +1,22 @@
+## 1.1.0 (2015-10-13)
+
+
+#### Bug Fixes
+
+* **npm-scripts:** remove `./node_modules/.bin/` from modules call ([bab003df](https://github.com/ubilabs/node-geobatch/commit/bab003df3c0d22a8e891d960e8cf44e020349264))
+* **test:** use babel-core as mocha compilers plugin for testing ([54063f16](https://github.com/ubilabs/node-geobatch/commit/54063f1609e34c2fc25580cb77ba31486656a674))
+* **tests:** fix rebase bug ([d5a58e14](https://github.com/ubilabs/node-geobatch/commit/d5a58e14ee0943b5fefec7f4756bd11d4cb6338a))
+
+
+#### Features
+
+* **GeoBatch:** make geocode accept streams ([0a032e74](https://github.com/ubilabs/node-geobatch/commit/0a032e74b3f1655ce7f5bec09461efdc46a3cc42))
+* **geobatch:** take accessor function for address ([7588f2ca](https://github.com/ubilabs/node-geobatch/commit/7588f2ca9e3eb23c40506b658a8be6ff910adaa1))
+* **geocode stream:** handle stats if input is stream ([f2cdbd89](https://github.com/ubilabs/node-geobatch/commit/f2cdbd892bd48c1294237a18ec56ff0dbaa8187c))
+* **geocoder:** return full geocoding result ([ec20a890](https://github.com/ubilabs/node-geobatch/commit/ec20a8908cfec55c8ec50dfe11b2265649bebee2))
+* **geocodestream:** add full input and full result to output stream ([9bd0630c](https://github.com/ubilabs/node-geobatch/commit/9bd0630cd2910695725f0aa954d0871ef2b5622e))
+
+
 ## 1.1.0 (2015-03-10)
 
 

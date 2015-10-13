@@ -87,6 +87,16 @@ describe('Testing GeoBatch', () => {
       .pipe(streamAssert.first(mockAddressArray[0]));
   });
 
+  it('should accept a stream into geocode and pass it on', () => {
+    const geoBatch = new GeoBatch(),
+      geocodeStreamFunction = sinon.stub(),
+      mockInputStream = intoStream.obj(['mock address']);
+    geoBatch.geocodeStream = geocodeStreamFunction;
+
+    geoBatch.geocode(mockInputStream);
+    sinon.assert.calledWith(geocodeStreamFunction, mockInputStream);
+  });
+
   it('geocodeStream should pipe geocoder stream', done => {
     // Create a mock geocode-stream class that passes elements unchanged.
     class mockGeocodeStream extends stream.Transform {

@@ -3,6 +3,7 @@
 import intoStream from 'into-stream';
 import StandardGeocoder from './geocoder';
 import StandardGeocodeStream from './geocode-stream';
+import stream from 'stream';
 
 /**
  * GeoBatch instance
@@ -29,10 +30,15 @@ export default class GeoBatch {
 
   /**
    * Geocode the passed in addresses
-   * @param {Array} addresses The addresses to geocode
+   * @param {Array/Stream} addresses The addresses to geocode
    * @return {Function} The stream
    */
   geocode(addresses) {
+    // If input is alrewdy stream, pass through directly.
+    if (addresses instanceof stream) {
+      return this.geocodeStream(addresses);
+    }
+
     const arrayStream = intoStream.obj(addresses),
       stats = {
         total: addresses.length,
@@ -45,17 +51,17 @@ export default class GeoBatch {
 
   /**
    * Geocode the elements of a passed in stream.
-   * @param  {Stream} stream An input stream
+   * @param  {Stream} inputStream An input stream
    * @param  {Object} stats  An object with the stream stats, defaults to {}.
    * @return {Stream}        A transformable stream.
    */
-  geocodeStream(stream, stats = {current: 0}) {
+  geocodeStream(inputStream, stats = {current: 0}) {
     const geocodeStream = new this.GeocodeStream(
       this.geocoder,
       stats,
       this.accessor
     );
-    stream.pipe(geocodeStream);
+    inputStream.pipe(geocodeStream);
 
     return geocodeStream;
   }

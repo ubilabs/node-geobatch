@@ -90,10 +90,10 @@ export default class Geocoder {
         return reject(new Error('No results found'));
       }
 
-      const result = response.results;
+      const results = response.results;
 
-      this.cache.add(address, result);
-      return resolve(result);
+      this.cache.add(address, results);
+      return resolve(results);
     });
   }
 }

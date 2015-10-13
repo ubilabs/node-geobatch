@@ -17,9 +17,17 @@ import stream from 'stream';
  */
 export default class GeoBatch {
   constructor(
-    {cacheFile = 'geocache.db', clientId = null, privateKey = null}
-      = {cacheFile: 'geocache.db', clientId: null, privateKey: null},
-    accessor = address => address,
+    {
+      cacheFile = 'geocache.db',
+      clientId = null,
+      privateKey = null,
+      accessor = address => address
+    } = {
+      cacheFile: 'geocache.db',
+      clientId: null,
+      privateKey: null,
+      accessor: address => address
+    },
     Geocoder = StandardGeocoder,
     GeocodeStream = StandardGeocodeStream
   ) {
@@ -34,7 +42,7 @@ export default class GeoBatch {
    * @return {Function} The stream
    */
   geocode(addresses) {
-    // If input is alrewdy stream, pass through directly.
+    // If input is already stream, pass through directly.
     if (addresses instanceof stream) {
       return this.geocodeStream(addresses);
     }

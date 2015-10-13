@@ -29,11 +29,11 @@ export default class GeocodeStream extends stream.Transform {
    */
   _transform(input, encoding, done) { // eslint-disable-line
     this.geocoder.geocodeAddress(this.accessor(input))
-      .then(result => {
+      .then(results => {
         let data = this.getMetaInfo(input);
-        data.result = result[0];
-        data.results = result;
-        data.location = result[0].geometry.location;
+        data.result = results[0];
+        data.results = results;
+        data.location = results[0].geometry.location;
         this.push(data);
         done();
       })

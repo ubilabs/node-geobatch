@@ -21,7 +21,7 @@ describe('Testing GeoBatch', () => {
       expectedOptions =
         {cacheFile: 'geocache.db', clientId: null, privateKey: null},
       options = {clientId: 'a clientID', privateKey: 'a privateKey'},
-      geoBatch = new GeoBatch(options, null, MockGeoCoder);
+      geoBatch = new GeoBatch(options, MockGeoCoder);
 
     expectedOptions.clientId = 'a clientID';
     expectedOptions.privateKey = 'a privateKey';
@@ -32,7 +32,7 @@ describe('Testing GeoBatch', () => {
   it('should accept an accessor function', function() {
     /* eslint-disable no-unused-vars */
     const mockAccessor = sinon.stub(),
-      geoBatch = new GeoBatch({}, mockAccessor);
+      geoBatch = new GeoBatch({accessor: mockAccessor});
 
     should(geoBatch.accessor).be.equal(mockAccessor);
   });
@@ -109,7 +109,7 @@ describe('Testing GeoBatch', () => {
       }
     }
     const mockGeoCoder = sinon.stub(),
-      geoBatch = new GeoBatch({}, null, mockGeoCoder, mockGeocodeStream),
+      geoBatch = new GeoBatch({}, mockGeoCoder, mockGeocodeStream),
       mockAddress = 'some address',
       input = intoStream.obj([mockAddress]),
       resultStream = geoBatch.geocodeStream(input);
@@ -140,8 +140,7 @@ describe('Testing GeoBatch', () => {
     }
     const mockGeoCoder = sinon.stub(),
       geoBatch = new GeoBatch(
-        {},
-        mockAccessor,
+        {accessor: mockAccessor},
         mockGeoCoder,
         mockGeocodeStream
       ),

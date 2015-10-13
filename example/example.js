@@ -1,4 +1,4 @@
-import Geobatch from '../src/index';
+import GeoBatch from '../src/index';
 
 const accessor = input => input.address,
   input = [
@@ -9,9 +9,9 @@ const accessor = input => input.address,
       address: 'Berlin'
     }
   ],
-  gb = new Geobatch({}, accessor),
-  resultStream = gb.geocode(input);
+  geoBatch = new GeoBatch({accessor});
 
-resultStream.on('data', result => {
-  console.log(result); // eslint-disable-line
-});
+geoBatch.geocode(input)
+  .on('data', result => {
+    console.log(result); // eslint-disable-line
+  });

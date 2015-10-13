@@ -125,8 +125,9 @@ You can pass in options on initalization of the GeoBatch:
 new GeoBatch({
   clientId: 'myClientId',
   privateKey: 'myPrivateKey',
-  cacheFile: 'myGeocache.db'
-}, accessorFunction);
+  cacheFile: 'myGeocache.db',
+  accessor: myAccessorFunction
+});
 ```
 
 #### `clientId`
@@ -141,12 +142,12 @@ Type `String`. The Google Maps private key, if you are using Google for Work. If
 
 Type `String`. The path of the cache file, in which the geocoding responses are cached. Default is `geocache.db`.
 
-#### `accessorFunction`
+#### `accessor`
 
 Type `Function`. An accessor function that extracts the address data from the provided input. Defaults to:
 ```js
-function(item) {
-  return item;
+function(address) {
+  return address;
 }
 ```
 

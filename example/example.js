@@ -1,7 +1,6 @@
 import Geobatch from '../src/index';
 
 const accessor = input => input.address,
-  gb = new Geobatch({}, accessor),
   input = [
     {
       address: 'Hamburg'
@@ -10,8 +9,9 @@ const accessor = input => input.address,
       address: 'Berlin'
     }
   ],
-  s = gb.geocode(input);
+  gb = new Geobatch({}, accessor),
+  resultStream = gb.geocode(input);
 
-s.on('data', result => {
-  console.log(result);
+resultStream.on('data', result => {
+  console.log(result); // eslint-disable-line
 });

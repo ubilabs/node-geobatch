@@ -54,19 +54,26 @@ export default class GeocodeStream extends stream.Transform {
   getMetaInfo(input) {
     this.stats.current++;
 
-    const now = new Date(),
-      ratio = this.stats.current / this.stats.total;
-    return {
+    let metaInfo = {
       error: null,
       address: this.accessor(input),
       input: input,
       location: {},
       result: {},
-      total: this.stats.total,
-      current: this.stats.current,
-      pending: this.stats.total - this.stats.current,
-      percent: ratio * 100,
-      estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
+      current: this.stats.current
     };
+
+    if (this.stats.hasOwnProperty('total')) {
+      const now = new Date(),
+        ratio = this.stats.current / this.stats.total;
+
+      Object.assign(metaInfo, {
+        total: this.stats.total,
+        pending: this.stats.total - this.stats.current,
+        percent: ratio * 100,
+        estimatedDuration: Math.round((now - this.stats.startTime) / ratio)
+      });
+    }
+    return metaInfo;
   }
 }

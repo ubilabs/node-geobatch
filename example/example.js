@@ -1,4 +1,4 @@
-import Geobatch from './src/index';
+import Geobatch from '../src/index';
 
 const accessor = input => input.address,
   gb = new Geobatch({}, accessor),

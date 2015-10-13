@@ -52,11 +52,7 @@ const helpers = {
         mockGeocodeAddressFunction
       ),
       mockGeocoder = GeoCoderInterface.init(),
-      mockStats = {
-        current: 0,
-        total: 0,
-        startTime: new Date()
-      };
+      mockStats = {};
     return new GeocodeStream(mockGeocoder, mockStats);
   }
 };

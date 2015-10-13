@@ -49,7 +49,7 @@ export default class GeoBatch {
    * @param  {Object} stats  An object with the stream stats, defaults to {}.
    * @return {Stream}        A transformable stream.
    */
-  geocodeStream(stream, stats = {}) {
+  geocodeStream(stream, stats = {current: 0}) {
     const geocodeStream = new this.GeocodeStream(
       this.geocoder,
       stats,

@@ -112,14 +112,37 @@ describe('Geocode Stream', () => {
   });
 
   describe('(on succesful geocode)', () => {
-    it('add input address to result', done => {
-      const mockAddress = 'mockAddress',
-        mockStream = intoStream.obj([mockAddress]),
+    it('add input result', done => {
+      const mockInput = 'mockInput',
+        mockStream = intoStream.obj([mockInput]),
         mockGeocoderResult = {
           geometry: {location: 2}
         },
         promise = Promise.resolve(mockGeocoderResult),
         geocodeStream = getGeocodeStream(promise);
+
+      mockStream
+        .pipe(geocodeStream)
+        .pipe(streamAssert.first(item => {
+          should(item.input).equal(mockInput);
+        }))
+        .pipe(streamAssert.end(error => {
+          done(error);
+        }));
+    });
+
+    it('add input address to result,', done => {
+      const mockAccessor = input => input.address,
+        mockAddress = 'mockAddress',
+        mockInput = {address: mockAddress},
+        mockStream = intoStream.obj([mockInput]),
+        mockGeocoderResult = {
+          geometry: {location: 2}
+        },
+        promise = Promise.resolve(mockGeocoderResult),
+        geocodeStream = getGeocodeStream(promise);
+
+      geocodeStream.accessor = mockAccessor;
 
       mockStream
         .pipe(geocodeStream)
@@ -131,7 +154,7 @@ describe('Geocode Stream', () => {
         }));
     });
 
-    it('add geocoder result to result', done => {
+    it('add first geocoder result to result field', done => {
       const mockStream = intoStream.obj(['mockAddress']),
         mockGeocoderResult = [{
           geometry: {location: 2}
@@ -144,6 +167,25 @@ describe('Geocode Stream', () => {
         .pipe(geocodeStream)
         .pipe(streamAssert.first(item => {
           should(item.result).equal(expectedResult);
+        }))
+        .pipe(streamAssert.end(error => {
+          done(error);
+        }));
+    });
+
+    it('add all geocoder results to results field', done => {
+      const mockStream = intoStream.obj(['mockAddress']),
+        mockGeocoderResult = [{
+          geometry: {location: 2}
+        }],
+        expectedResult = mockGeocoderResult,
+        promise = Promise.resolve(mockGeocoderResult),
+        geocodeStream = getGeocodeStream(promise);
+
+      mockStream
+        .pipe(geocodeStream)
+        .pipe(streamAssert.first(item => {
+          should(item.results).equal(expectedResult);
         }))
         .pipe(streamAssert.end(error => {
           done(error);

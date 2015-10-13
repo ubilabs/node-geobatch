@@ -23,21 +23,22 @@ export default class GeocodeStream extends stream.Transform {
 
   /**
    * The _transform function for the stream.
-   * @param {String}   address The address to geocode
+   * @param {String}   input The address to geocode
    * @param {String}   encoding The encoding
    * @param {Function} done The done callback function
    */
-  _transform(address, encoding, done) { // eslint-disable-line
-    this.geocoder.geocodeAddress(this.accessor(address))
+  _transform(input, encoding, done) { // eslint-disable-line
+    this.geocoder.geocodeAddress(this.accessor(input))
       .then(result => {
-        let data = this.getMetaInfo(address);
+        let data = this.getMetaInfo(input);
         data.result = result[0];
+        data.results = result;
         data.location = result[0].geometry.location;
         this.push(data);
         done();
       })
       .catch(error => {
-        let data = this.getMetaInfo(address);
+        let data = this.getMetaInfo(input);
 
         data.error = error.message;
         this.push(data);
@@ -47,17 +48,18 @@ export default class GeocodeStream extends stream.Transform {
 
   /**
    * Get the result meta information
-   * @param {String} address The address
+   * @param {String} input The input
    * @return {Object} The meta information
    */
-  getMetaInfo(address) {
+  getMetaInfo(input) {
     this.stats.current++;
 
     const now = new Date(),
       ratio = this.stats.current / this.stats.total;
     return {
       error: null,
-      address: address,
+      address: this.accessor(input),
+      input: input,
       location: {},
       result: {},
       total: this.stats.total,

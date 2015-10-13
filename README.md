@@ -29,6 +29,8 @@ geoBatch.geocode(['Hamburg', 'Berlin'])
   });
 ```
 
+`geoBatch.geocode` also accepts a stream as input.
+
 ### Result
 
 The data in the example above is an object like this:
@@ -37,6 +39,7 @@ The data in the example above is an object like this:
 {
   error: null,
   address: 'Hamburg',
+  input: 'Hamburg',
   location: { lat: 53.5510846, lng: 9.9936818 },
   result: {
     address_components: [ … ],
@@ -49,6 +52,18 @@ The data in the example above is an object like this:
       place_id: 'ChIJuRMYfoNhsUcRoDrWe_I9JgQ',
       types: [ 'locality', 'political' ]
     }
+  },
+  results: [{
+    address_components: [ … ],
+    formatted_address: 'Hamburg, Germany',
+    geometry: {
+      bounds: { northeast: [Object], southwest: [Object] },
+      location: { lat: 53.5510846, lng: 9.9936818 },
+      location_type: 'APPROXIMATE',
+      viewport: { northeast: [Object], southwest: [Object] } },
+      place_id: 'ChIJuRMYfoNhsUcRoDrWe_I9JgQ',
+      types: [ 'locality', 'political' ]
+    }]
   },
   total: 2,
   current: 1,
@@ -66,17 +81,25 @@ Type `string`. Contains the error message. Default `null`.
 
 Type `string`. Contains the address that was put into the geocoder. Default `''`.
 
+#### `input`
+
+Contains the original input. This was the input to the accessor function to get the `address`.
+
 #### `location`
 
 Type `Object`. The coordinates returned from the Google Maps Geocoding API. Default `{}`.
 
 #### `result`
 
-Type `Object`. The complete result from the Google Maps Geocoding API. Default `{}`.
+Type `Object`. The complete first result item from the Google Maps Geocoding API. Default `{}`.
+
+#### `results`
+
+Type `Array`. The complete result from the Google Maps Geocoding API.
 
 #### `total`
 
-Type `Number`. The total number of addresses to geocode.
+Type `Number`. The total number of addresses to geocode. (Not included if stream was provided.)
 
 #### `current`
 
@@ -84,15 +107,15 @@ Type `Number`. The index of the current geocoded address.
 
 #### `pending`
 
-Type `Number`. The number of addresses to still geocode.
+Type `Number`. The number of addresses to still geocode. (Not included if stream was provided.)
 
 #### `percent`
 
-Type `Number`. The percentage that got geocoded already.
+Type `Number`. The percentage that got geocoded already. (Not included if stream was provided.)
 
 #### `estimatedDuration`
 
-Type `Number`. The estimated duration based on past progress. In milliseconds.
+Type `Number`. The estimated duration based on past progress. In milliseconds. (Not included if stream was provided.)
 
 ### Options
 
@@ -103,7 +126,7 @@ new GeoBatch({
   clientId: 'myClientId',
   privateKey: 'myPrivateKey',
   cacheFile: 'myGeocache.db'
-});
+}, accessorFunction);
 ```
 
 #### `clientId`
@@ -117,6 +140,15 @@ Type `String`. The Google Maps private key, if you are using Google for Work. If
 #### `cacheFile`
 
 Type `String`. The path of the cache file, in which the geocoding responses are cached. Default is `geocache.db`.
+
+#### `accessorFunction`
+
+Type `Function`. An accessor function that extracts the address data from the provided input. Defaults to:
+```js
+function(item) {
+  return item;
+}
+```
 
 ## Contribution
 

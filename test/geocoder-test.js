@@ -106,9 +106,13 @@ describe('Testing geocoder', function() {
     }
   );
 
-  it('should throw error when geocoder returns error', function(done) {
+  it('should throw authentication error when geocoder returns error', function(done) {
     const mockAddress = 'Hamburg',
-      geocodeFunction = getGeocodeFunction({error: 'error'}),
+      geocodeFunction = getGeocodeFunction({
+        error: {
+          code: 403
+        }
+      }),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
         {
@@ -122,6 +126,30 @@ describe('Testing geocoder', function() {
       .catch(error => {
         should(error).be.an.Error;
         should(error.message).equal('Wrong clientId or privateKey');
+      })
+      .then(done, done);
+  });
+
+  it('should throw connection error when geocoder returns error', function(done) {
+    const mockAddress = 'Hamburg',
+      geocodeFunction = getGeocodeFunction({
+        error: {
+          code: 'ECONNREFUSED'
+        }
+      }),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {
+          clientId: 'dummy',
+          privateKey: 'dummy'
+        },
+        geoCoderInterface,
+        MockCache);
+
+    geocoder.geocodeAddress(mockAddress)
+      .catch(error => {
+        should(error).be.an.Error;
+        should(error.message).equal('Could not connect to the Google Maps API');
       })
       .then(done, done);
   });

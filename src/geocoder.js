@@ -3,6 +3,7 @@
 import Cache from './cache';
 import isEmpty from 'amp-is-empty';
 import GoogleGeocoder from './lib/google-geocoder';
+import Errors from './errors';
 
 /**
  * Geocoder instance
@@ -79,7 +80,10 @@ export default class Geocoder {
       this.currentRequests--;
 
       if (error) {
-        return reject(new Error('Wrong clientId or privateKey'));
+        const errorMessage = Errors[error.code] ||
+          'Google Maps API error: ' + error.code;
+
+        return reject(new Error(errorMessage));
       }
 
       if (response.status === 'OVER_QUERY_LIMIT') {

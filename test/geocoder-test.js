@@ -106,7 +106,7 @@ describe('Testing geocoder', function() {
     }
   );
 
-  it('should throw authentication error when geocoder returns error', function(done) {
+  it('should throw authentication error when appropriate', function(done) {
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({
         error: {
@@ -130,7 +130,7 @@ describe('Testing geocoder', function() {
       .then(done, done);
   });
 
-  it('should throw connection error when geocoder returns error', function(done) {
+  it('should throw connection error when appropriate', function(done) {
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({
         error: {

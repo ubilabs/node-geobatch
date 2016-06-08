@@ -19,28 +19,25 @@ describe('Helper functions ', () => {
     });
 
     it(`should return a geocoder interface which returna geocoder with
-      a given geocode function`, () => {
-        const mockGeocodeFunction = () => {},
-          geocoderInterface = getGeocoderInterface(mockGeocodeFunction),
-          geocoder = geocoderInterface.init(),
-          geocodeFunction = geocoder.geocode;
-        should(geocodeFunction).deepEqual(mockGeocodeFunction);
-      }
-    );
+    a given geocode function`, () => {
+      const mockGeocodeFunction = () => {},
+        geocoderInterface = getGeocoderInterface(mockGeocodeFunction),
+        geocoder = geocoderInterface.init(),
+        geocodeFunction = geocoder.geocode;
+      should(geocodeFunction).deepEqual(mockGeocodeFunction);
+    });
 
     it(`should return a geocoder interface which return a geocoder with
-      a given geocodeAddress function`, () => {
-        const mockGeocodeAddressFunction = () => {},
-          geocoderInterface = getGeocoderInterface(
-            null,
-            mockGeocodeAddressFunction
-          ),
-          geocoder = geocoderInterface.init(),
-          geocodeAddressFunction = geocoder.geocodeAddress;
-
-        should(geocodeAddressFunction).deepEqual(mockGeocodeAddressFunction);
-      }
-    );
+    a given geocodeAddress function`, () => {
+      const mockGeocodeAddressFunction = () => {},
+        geocoderInterface = getGeocoderInterface(
+          null,
+          mockGeocodeAddressFunction
+        ),
+        geocoder = geocoderInterface.init(),
+        geocodeAddressFunction = geocoder.geocodeAddress;
+      should(geocodeAddressFunction).deepEqual(mockGeocodeAddressFunction);
+    });
   });
 
   describe('getGeocodeFunction', () => {

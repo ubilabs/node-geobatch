@@ -125,7 +125,7 @@ describe('Testing geocoder', function() {
     geocoder.geocodeAddress(mockAddress)
       .catch(error => {
         should(error).be.an.Error;
-        should(error.message).equal('Wrong clientId or privateKey');
+        should(error.message).equal('Authentication error');
       })
       .then(done, done);
   });

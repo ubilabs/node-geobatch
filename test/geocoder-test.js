@@ -100,7 +100,7 @@ describe('Testing geocoder', function() {
 
       geocoder.geocodeAddress(mockAddress)
         .then(() => {
-          sinon.assert.calledWith(geocodeFunction, mockAddress);
+          sinon.assert.calledWith(geocodeFunction, {address: mockAddress});
         })
         .then(done, done);
     }

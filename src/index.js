@@ -21,17 +21,19 @@ export default class GeoBatch {
       cacheFile = 'geocache.db',
       clientId = null,
       privateKey = null,
+      apiKey = null,
       accessor = address => address
     } = {
       cacheFile: 'geocache.db',
       clientId: null,
       privateKey: null,
+      apiKey: null,
       accessor: address => address
     },
     Geocoder = StandardGeocoder,
     GeocodeStream = StandardGeocodeStream
   ) {
-    this.geocoder = new Geocoder({cacheFile, clientId, privateKey});
+    this.geocoder = new Geocoder({cacheFile, clientId, privateKey, apiKey});
     this.GeocodeStream = GeocodeStream;
     this.accessor = accessor;
   }

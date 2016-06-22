@@ -33,7 +33,7 @@
   "dependencies": {
     "amp-is-empty": "^1.0.2",
     "flat-file-db": "^0.1.4",
-    "googlemaps": "^0.1.20",
+    "googlemaps": "^1.6.0",
     "into-stream": "^2.0.0"
   },
   "devDependencies": {

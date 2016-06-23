@@ -2,7 +2,11 @@
 import should from 'should';
 import Geocoder from '../src/geocoder.js';
 import sinon from 'sinon';
-import {getGeocodeFunction, getGeocoderInterface} from './lib/helpers';
+import {
+  getGeocodeFunction,
+  getGeocoderInterface,
+  getGeocoderOptions
+} from './lib/helpers';
 
 class MockCache {
   constructor() {}
@@ -11,16 +15,6 @@ class MockCache {
 }
 
 describe('Testing geocoder', function() { // eslint-disable-line max-statements
-  it('should create a new instance when called without options', function() {
-    const geocoder = new Geocoder(
-      {},
-      getGeocoderInterface(),
-      MockCache
-    );
-
-    should.exist(geocoder);
-  });
-
   it('should create a cache', function() {
     const mackCacheFileName = 'a file name',
       mockCacheConstructor = sinon.stub();
@@ -33,7 +27,9 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }
 
     const geocoder = new Geocoder( // eslint-disable-line
-      {cacheFile: mackCacheFileName},
+      getGeocoderOptions({
+        cacheFile: mackCacheFileName
+      }),
       getGeocoderInterface(),
       NewMockCache
     );
@@ -112,7 +108,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
 
     const geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
-        {},
+        getGeocoderOptions(),
         geoCoderInterface,
         MockCache
       );
@@ -126,10 +122,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
         geocodeFunction = getGeocodeFunction({results: ['some result']}),
         geoCoderInterface = getGeocoderInterface(geocodeFunction),
         geocoder = new Geocoder(
-          {
-            clientId: 'dummy',
-            privateKey: 'dummy'
-          },
+          getGeocoderOptions(),
           geoCoderInterface,
           MockCache
         );
@@ -198,10 +191,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
       }),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
-        {
-          clientId: 'dummy',
-          privateKey: 'dummy'
-        },
+        getGeocoderOptions(),
         geoCoderInterface,
         MockCache);
 
@@ -220,7 +210,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
       geocodeFunction = getGeocodeFunction({results: geoCoderResult}),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
-        {},
+        getGeocoderOptions(),
         geoCoderInterface,
         MockCache
       );
@@ -246,7 +236,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }
 
     const geocoder = new Geocoder(
-        {},
+        getGeocoderOptions(),
         geoCoderInterface,
         NewMockCache
       ),
@@ -273,7 +263,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }
 
     const geocoder = new Geocoder(
-        {},
+        getGeocoderOptions(),
         geoCoderInterface,
         NewMockCache
       ),
@@ -291,7 +281,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
       geocodeFunction = getGeocodeFunction({results: []}),
       geoCoderInterface = getGeocoderInterface(geocodeFunction),
       geocoder = new Geocoder(
-        {},
+        getGeocoderOptions(),
         geoCoderInterface,
         MockCache
       );

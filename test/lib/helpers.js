@@ -40,6 +40,20 @@ const helpers = {
   },
 
   /**
+   * Returns an options object for the Geocoder constructor with
+   * required default options added
+   * @param  {Object} opts desired extra options
+   * @return {Object}      input options, with added default options
+   */
+  getGeocoderOptions: opts => {
+    const defaultOptions = {
+      apiKey: 'dummy'
+    };
+
+    return Object.assign({}, defaultOptions, opts);
+  },
+
+  /**
    * Returns a mock geocoderStream.
    * @param  {Promise} geocoderPromise The geocode promise returned by the
    *                                   geocoder.

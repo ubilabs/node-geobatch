@@ -15,6 +15,16 @@ class MockCache {
 }
 
 describe('Testing geocoder', function() { // eslint-disable-line max-statements
+  it('should require either credentials or an api key', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
+        {},
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Must either provide credentials or API key');
+  });
+
   it('should create a cache', function() {
     const mackCacheFileName = 'a file name',
       mockCacheConstructor = sinon.stub();

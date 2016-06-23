@@ -10,7 +10,7 @@ class MockCache {
   add() {}
 }
 
-describe('Testing geocoder', function() { // eslint-disable-line
+describe('Testing geocoder', function() { // eslint-disable-line max-statements
   it('should create a new instance when called without options', function() {
     const geocoder = new Geocoder(
       {},
@@ -142,7 +142,7 @@ describe('Testing geocoder', function() { // eslint-disable-line
     }
   );
 
-  it('should throw authentication error when using client id', function(done) {
+  it('should throw authentication error when using invalid client id', function(done) { // eslint-disable-line max-len
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({
         error: {
@@ -166,7 +166,7 @@ describe('Testing geocoder', function() { // eslint-disable-line
       .then(done, done);
   });
 
-  it('should throw authentication error when using api key', function(done) {
+  it('should throw authentication error when using invalid api key', function(done) { // eslint-disable-line max-len
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({
         error: {

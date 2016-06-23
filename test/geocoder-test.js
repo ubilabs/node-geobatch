@@ -10,7 +10,7 @@ class MockCache {
   add() {}
 }
 
-describe('Testing geocoder', function() {
+describe('Testing geocoder', function() { // eslint-disable-line max-statements
   it('should create a new instance when called without options', function() {
     const geocoder = new Geocoder(
       {},
@@ -51,6 +51,16 @@ describe('Testing geocoder', function() {
     should.exist(geocoder);
   });
 
+  it('should accept an api key', function() {
+    const geocoder = new Geocoder(
+      {apiKey: 'dummy'},
+      getGeocoderInterface(),
+      MockCache
+    );
+
+    should.exist(geocoder);
+  });
+
   it('should throw an error when there is only the client id', function() {
     should(() => {
       const geocoder = new Geocoder( // eslint-disable-line
@@ -69,6 +79,32 @@ describe('Testing geocoder', function() {
         MockCache
       );
     }).throw('Missing clientId');
+  });
+
+  it('should throw an error when there is a client id & api key', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line
+        {
+          clientId: 'dummy',
+          apiKey: 'dummy'
+        },
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Can only specify credentials or API key');
+  });
+
+  it('should throw an error when there is a private key & api key', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line
+        {
+          privateKey: 'dummy',
+          apiKey: 'dummy'
+        },
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Can only specify credentials or API key');
   });
 
   it('should return a promise from the geocodeAddress function', () => {
@@ -100,13 +136,13 @@ describe('Testing geocoder', function() {
 
       geocoder.geocodeAddress(mockAddress)
         .then(() => {
-          sinon.assert.calledWith(geocodeFunction, mockAddress);
+          sinon.assert.calledWith(geocodeFunction, {address: mockAddress});
         })
         .then(done, done);
     }
   );
 
-  it('should throw authentication error when appropriate', function(done) {
+  it('should throw authentication error when using invalid client id', function(done) { // eslint-disable-line max-len
     const mockAddress = 'Hamburg',
       geocodeFunction = getGeocodeFunction({
         error: {
@@ -125,7 +161,30 @@ describe('Testing geocoder', function() {
     geocoder.geocodeAddress(mockAddress)
       .catch(error => {
         should(error).be.an.Error;
-        should(error.message).equal('Wrong clientId or privateKey');
+        should(error.message).equal('Authentication error');
+      })
+      .then(done, done);
+  });
+
+  it('should throw authentication error when using invalid api key', function(done) { // eslint-disable-line max-len
+    const mockAddress = 'Hamburg',
+      geocodeFunction = getGeocodeFunction({
+        error: {
+          code: 403
+        }
+      }),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        {
+          apiKey: 'dummy'
+        },
+        geoCoderInterface,
+        MockCache);
+
+    geocoder.geocodeAddress(mockAddress)
+      .catch(error => {
+        should(error).be.an.Error;
+        should(error.message).equal('Authentication error');
       })
       .then(done, done);
   });

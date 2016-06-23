@@ -125,6 +125,7 @@ You can pass in options on initalization of the GeoBatch:
 new GeoBatch({
   clientId: 'myClientId',
   privateKey: 'myPrivateKey',
+  apiKey: 'myApiKey',
   cacheFile: 'myGeocache.db',
   accessor: myAccessorFunction
 });
@@ -137,6 +138,11 @@ Type `String`. The Google Maps Client ID, if you are using Google for Work. If t
 #### `privateKey`
 
 Type `String`. The Google Maps private key, if you are using Google for Work. If this is passed in, the `clientId` is also required. Default is `null`.
+
+#### `apiKey`
+
+Type `String`. The Google Maps API key. If this is passed, neither `clientId` nor `privateKey` may be set.
+Default is `null`.
 
 #### `cacheFile`
 

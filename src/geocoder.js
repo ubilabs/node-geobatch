@@ -5,6 +5,12 @@ import isEmpty from 'amp-is-empty';
 import GoogleGeocoder from './lib/google-geocoder';
 import Errors from './errors';
 
+const defaults = {
+  clientId: null,
+  privateKey: null,
+  apiKey: null
+};
+
 /**
  * Geocoder instance
  * @type {Class}
@@ -16,8 +22,11 @@ export default class Geocoder {
    * @param  {Object} options Geocoder options.
    */
   constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
-    options.clientId = options.clientId || null;
-    options.privateKey = options.privateKey || null;
+    options = Object.assign({}, defaults, options);
+
+    if ((options.clientId || options.privateKey) && options.apiKey) {
+      throw new Error('Can only specify credentials or API key');
+    }
 
     if (options.clientId && !options.privateKey) {
       throw new Error('Missing privateKey');
@@ -28,14 +37,18 @@ export default class Geocoder {
     }
 
     this.timeBetweenRequests =
-      options.clientId && options.privateKey ? 100 : 200;
+      options.clientId && options.privateKey || options.apiKey ? 20 : 200;
     this.maxRequests = 20;
 
     this.lastGeocode = new Date();
     this.currentRequests = 0;
 
     this.cache = new GeoCache(options.cacheFile);
-    this.geocoder = geocoder.init(options);
+    this.geocoder = geocoder.init({
+      clientId: options.clientId,
+      privateKey: options.privateKey,
+      key: options.apiKey
+    });
   }
 
   /**
@@ -76,7 +89,11 @@ export default class Geocoder {
     this.currentRequests++;
     this.lastGeocode = now;
 
-    this.geocoder.geocode(address.replace('\'', ''), (error, response) => {
+    const geoCodeParams = {
+      address: address.replace('\'', '')
+    };
+
+    this.geocoder.geocode(geoCodeParams, (error, response) => {
       this.currentRequests--;
 
       if (error) {

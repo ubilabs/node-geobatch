@@ -18,13 +18,34 @@ describe('Testing GeoBatch', () => {
   it('should accept a clientId and a privateKey', function() {
     /* eslint-disable no-unused-vars */
     const MockGeoCoder = sinon.stub(),
-      expectedOptions =
-        {cacheFile: 'geocache.db', clientId: null, privateKey: null},
+      expectedOptions = {
+        cacheFile: 'geocache.db',
+        clientId: null,
+        privateKey: null,
+        apiKey: null
+      },
       options = {clientId: 'a clientID', privateKey: 'a privateKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);
 
     expectedOptions.clientId = 'a clientID';
     expectedOptions.privateKey = 'a privateKey';
+
+    sinon.assert.calledWith(MockGeoCoder, expectedOptions);
+  });
+
+  it('should accept an apiKey', function() {
+    /* eslint-disable no-unused-vars */
+    const MockGeoCoder = sinon.stub(),
+      expectedOptions = {
+        cacheFile: 'geocache.db',
+        clientId: null,
+        privateKey: null,
+        apiKey: null
+      },
+      options = {apiKey: 'an apiKey'},
+      geoBatch = new GeoBatch(options, MockGeoCoder);
+
+    expectedOptions.apiKey = 'an apiKey';
 
     sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });

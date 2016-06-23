@@ -1,4 +1,10 @@
-import googleMaps from 'googlemaps';
+import GoogleMapsAPI from 'googlemaps';
+
+const defaults = {
+  clientId: null,
+  privateKey: null,
+  key: null
+};
 
 export default class GoogleGeocoder {
 
@@ -7,9 +13,8 @@ export default class GoogleGeocoder {
    * @param  {Object}             Config Object
    * @return {Object}             Instance of google maps API
    */
-  static init({clientId, privateKey} = {clientId: null, privateKey: null}) {
-    googleMaps.config('google-client-id', clientId);
-    googleMaps.config('google-private-key', privateKey);
-    return googleMaps;
+  static init(options = {}) {
+    options = Object.assign({}, defaults, options);
+    return new GoogleMapsAPI(options);
   }
 }

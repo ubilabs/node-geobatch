@@ -37,7 +37,7 @@ export default class Geocoder {
     }
 
     this.timeBetweenRequests =
-      options.clientId && options.privateKey || options.apiKey ? 100 : 200;
+      options.clientId && options.privateKey || options.apiKey ? 20 : 200;
     this.maxRequests = 20;
 
     this.lastGeocode = new Date();

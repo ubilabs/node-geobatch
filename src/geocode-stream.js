@@ -1,10 +1,10 @@
-import stream from 'stream';
+import ParallelTransform from './lib/parallel-transform';
 
 /**
  * A streaming object for the geocode
  * @param {Object} geocoder The geocoder
  */
-export default class GeocodeStream extends stream.Transform {
+export default class GeocodeStream extends ParallelTransform {
   /**
    * Constructs a geocodeStream.
    * @param  {Object} geocoder A geocoder.
@@ -14,7 +14,7 @@ export default class GeocodeStream extends stream.Transform {
    *                             data item directly.
    */
   constructor(geocoder, stats, accessor = address => address) {
-    super({objectMode: true});
+    super(50, {objectMode: true});
 
     this.geocoder = geocoder;
     this.stats = stats;
@@ -22,27 +22,24 @@ export default class GeocodeStream extends stream.Transform {
   }
 
   /**
-   * The _transform function for the stream.
+   * The _parallelTransform function for the stream.
    * @param {String}   input The address to geocode
-   * @param {String}   encoding The encoding
    * @param {Function} done The done callback function
    */
-  _transform(input, encoding, done) { // eslint-disable-line
+  _parallelTransform(input, done) { // eslint-disable-line
     this.geocoder.geocodeAddress(this.accessor(input))
       .then(results => {
         let data = this.getMetaInfo(input);
         data.result = results[0];
         data.results = results;
         data.location = results[0].geometry.location;
-        this.push(data);
-        done();
+        done(null, data);
       })
       .catch(error => {
         let data = this.getMetaInfo(input);
 
         data.error = error.message;
-        this.push(data);
-        done();
+        done(null, data);
       });
   }
 

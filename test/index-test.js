@@ -8,6 +8,7 @@ import streamAssert from 'stream-assert';
 
 import GeoBatch from '../src/index.js';
 import {getGeocoderOptions} from './lib/helpers.js';
+import ParallelTransform from '../src/lib/parallel-transform';
 
 describe('Testing GeoBatch', () => {
   it('should accept a clientId and a privateKey', function() {
@@ -167,15 +168,14 @@ describe('Testing GeoBatch', () => {
     const mockAccessor = sinon.stub();
 
     // Create a mock geocode-stream class that passes elements unchanged.
-    class mockGeocodeStream extends stream.Transform {
+    class mockGeocodeStream extends ParallelTransform {
       constructor(geocoder, stats, accessor) {
-        super({objectMode: true});
+        super(1, {objectMode: true});
         should(accessor).equal(mockAccessor);
         done();
       }
-      _transform(item, encoding, done) { // eslint-disable-line
-        this.push(item);
-        done();
+      _parallelTransform(item, done) { // eslint-disable-line no-shadow
+        done(null, item);
       }
     }
     const mockGeoCoder = sinon.stub(),

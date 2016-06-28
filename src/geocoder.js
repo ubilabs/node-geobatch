@@ -56,10 +56,8 @@ export default class Geocoder {
     options = Object.assign({}, geocoderDefaults, options);
     validateOptions(options);
 
-    this.timeBetweenRequests = Math.ceil(1000 / options.queriesPerSecond);
-    this.maxRequests = 20;
-    this.lastGeocode = new Date();
-    this.currentRequests = 0;
+    this.qps = options.queriesPerSecond;
+    this.queries = -1;
 
     this.cache = new GeoCache(options.cacheFile);
     this.geocoder = geocoder.init({
@@ -76,8 +74,40 @@ export default class Geocoder {
    */
   geocodeAddress(address) {
     return new Promise((resolve, reject) => {
-      this.startGeocode(address, resolve, reject);
+      this.queueGeocode(address, resolve, reject);
     });
+  }
+
+  /**
+   * Add a geocoding operation to the queue of geocodes
+   * @param {String} address The address to geocode
+   * @param {Function} resolve The Promise resolve function
+   * @param {Function} reject The Promise reject function
+   * @return {?} Something to get out
+   */
+  queueGeocode(address, resolve, reject) {
+    const cachedAddress = this.cache.get(address);
+    if (cachedAddress) {
+      return resolve(cachedAddress);
+    }
+
+    if (this.queries === -1) {
+      this.startBucket();
+    } else if (this.queries >= this.qps) {
+      return setTimeout(() => {
+        this.queueGeocode(address, resolve, reject);
+      }, 100);
+    }
+
+    this.queries++;
+    this.startGeocode(address, resolve, reject);
+  }
+
+  startBucket() {
+    this.queries = 0;
+    setTimeout(() => {
+      this.queriesThisSecond = -1;
+    }, 1000);
   }
 
   /**
@@ -85,35 +115,13 @@ export default class Geocoder {
    * @param {String} address The address to geocode
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
-   * @return {?} Something to get out
    */
   startGeocode(address, resolve, reject) {
-    const cachedAddress = this.cache.get(address);
-    if (cachedAddress) {
-      return resolve(cachedAddress);
-    }
-
-    let now = new Date();
-
-    if (
-      this.currentRequests >= this.maxRequests ||
-      now - this.lastGeocode <= this.timeBetweenRequests
-    ) {
-      return setTimeout(() => {
-        this.startGeocode(address, resolve, reject);
-      }, this.timeBetweenRequests);
-    }
-
-    this.currentRequests++;
-    this.lastGeocode = now;
-
     const geoCodeParams = {
       address: address.replace('\'', '')
     };
 
     this.geocoder.geocode(geoCodeParams, (error, response) => {
-      this.currentRequests--;
-
       if (error) {
         const errorMessage = Errors[error.code] ||
           'Google Maps API error: ' + error.code;

@@ -133,7 +133,8 @@ new GeoBatch({
 
 #### `clientId`
 
-Type `String`. The Google Maps Client ID, if you are using Google for Work. If this is passed in, the `privateKey` is also required. Default is `null`.
+Type `String`. The Google Maps Client ID, if you are using Google for Work. If this is passed in, the `privateKey` is also required.
+You must provide either a `clientId` and `privateKey`, or an `apiKey`. Default is `null`.
 
 #### `privateKey`
 
@@ -142,6 +143,7 @@ Type `String`. The Google Maps private key, if you are using Google for Work. If
 #### `apiKey`
 
 Type `String`. The Google Maps API key. If this is passed, neither `clientId` nor `privateKey` may be set.
+You must provide either a `clientId` and `privateKey`, or an `apiKey`.
 Default is `null`.
 
 #### `cacheFile`

@@ -12,6 +12,29 @@ const defaults = {
 };
 
 /**
+ * Validate a Geocoder options object
+ * This function throws an exception if the options are invalid
+ * @param {Object} options The options object to be validated
+ */
+function validateOptions(options) {
+  if ((options.clientId || options.privateKey) && options.apiKey) {
+    throw new Error('Can only specify credentials or API key');
+  }
+
+  if (options.clientId && !options.privateKey) {
+    throw new Error('Missing privateKey');
+  }
+
+  if (!options.clientId && options.privateKey) {
+    throw new Error('Missing clientId');
+  }
+
+  if (!options.apiKey && !(options.clientId && options.privateKey)) {
+    throw new Error('Must either provide credentials or API key');
+  }
+}
+
+/**
  * Geocoder instance
  * @type {Class}
  * @param {Object} options The options for the Geocoder
@@ -23,23 +46,10 @@ export default class Geocoder {
    */
   constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
     options = Object.assign({}, defaults, options);
+    validateOptions(options);
 
-    if ((options.clientId || options.privateKey) && options.apiKey) {
-      throw new Error('Can only specify credentials or API key');
-    }
-
-    if (options.clientId && !options.privateKey) {
-      throw new Error('Missing privateKey');
-    }
-
-    if (!options.clientId && options.privateKey) {
-      throw new Error('Missing clientId');
-    }
-
-    this.timeBetweenRequests =
-      options.clientId && options.privateKey || options.apiKey ? 20 : 200;
+    this.timeBetweenRequests = 20;
     this.maxRequests = 20;
-
     this.lastGeocode = new Date();
     this.currentRequests = 0;
 

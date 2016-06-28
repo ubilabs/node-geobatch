@@ -7,14 +7,9 @@ import sinon from 'sinon';
 import streamAssert from 'stream-assert';
 
 import GeoBatch from '../src/index.js';
+import {getGeocoderOptions} from './lib/helpers.js';
 
 describe('Testing GeoBatch', () => {
-  it('should create a new instance when called without params', function() {
-    const geoBatch = new GeoBatch();
-
-    should.exist(geoBatch);
-  });
-
   it('should accept a clientId and a privateKey', function() {
     /* eslint-disable no-unused-vars */
     const MockGeoCoder = sinon.stub(),
@@ -53,14 +48,16 @@ describe('Testing GeoBatch', () => {
   it('should accept an accessor function', function() {
     /* eslint-disable no-unused-vars */
     const mockAccessor = sinon.stub(),
-      geoBatch = new GeoBatch({accessor: mockAccessor});
+      geoBatch = new GeoBatch(getGeocoderOptions({
+        accessor: mockAccessor
+      }));
 
     should(geoBatch.accessor).be.equal(mockAccessor);
   });
 
   it('should have a geocode function that accepts and returns a stream',
     function(done) {
-      const geoBatch = new GeoBatch();
+      const geoBatch = new GeoBatch(getGeocoderOptions());
 
       should(geoBatch.geocode).be.a.Function;
 
@@ -74,7 +71,7 @@ describe('Testing GeoBatch', () => {
 
   it('should call geocodeStream with correct stats when called with array',
     () => {
-      const geoBatch = new GeoBatch(),
+      const geoBatch = new GeoBatch(getGeocoderOptions()),
         geocodeStreamFunction = sinon.stub(),
         mockAddressArray = ['mock address'],
         expectedTotal = mockAddressArray.length,
@@ -91,7 +88,7 @@ describe('Testing GeoBatch', () => {
   );
 
   it('should transform an array to stream and pass it to geocodeStream', () => {
-    const geoBatch = new GeoBatch(),
+    const geoBatch = new GeoBatch(getGeocoderOptions()),
       geocodeStreamFunction = sinon.stub(),
       mockAddressArray = ['mock address'],
       expectedTotal = mockAddressArray.length,
@@ -109,7 +106,7 @@ describe('Testing GeoBatch', () => {
   });
 
   it('should accept a stream into geocode and pass it on', () => {
-    const geoBatch = new GeoBatch(),
+    const geoBatch = new GeoBatch(getGeocoderOptions()),
       geocodeStreamFunction = sinon.stub(),
       mockInputStream = intoStream.obj(['mock address']);
     geoBatch.geocodeStream = geocodeStreamFunction;
@@ -130,7 +127,9 @@ describe('Testing GeoBatch', () => {
       }
     }
     const mockGeoCoder = sinon.stub(),
-      geoBatch = new GeoBatch({}, mockGeoCoder, mockGeocodeStream),
+      geoBatch = new GeoBatch(getGeocoderOptions(),
+        mockGeoCoder,
+        mockGeocodeStream),
       mockAddress = 'some address',
       input = intoStream.obj([mockAddress]),
       resultStream = geoBatch.geocodeStream(input);
@@ -161,7 +160,9 @@ describe('Testing GeoBatch', () => {
     }
     const mockGeoCoder = sinon.stub(),
       geoBatch = new GeoBatch(
-        {accessor: mockAccessor},
+        getGeocoderOptions({
+          accessor: mockAccessor
+        }),
         mockGeoCoder,
         mockGeocodeStream
       ),

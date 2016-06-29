@@ -113,6 +113,16 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }).throw('Can only specify credentials or API key');
   });
 
+  it('should accept a maximum requests per second option', function() {
+    const geocoder = new Geocoder(
+      getGeocoderOptions({queriesPerSecond: 10}),
+      getGeocoderInterface(),
+      MockCache
+    );
+
+    should.exist(geocoder);
+  });
+
   it('should return a promise from the geocodeAddress function', () => {
     const geocodeFunction = getGeocodeFunction({error: 'error'});
 

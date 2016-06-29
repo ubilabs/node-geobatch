@@ -8,7 +8,8 @@ import Errors from './errors';
 const defaults = {
   clientId: null,
   privateKey: null,
-  apiKey: null
+  apiKey: null,
+  queriesPerSecond: 50
 };
 
 /**
@@ -16,7 +17,7 @@ const defaults = {
  * This function throws an exception if the options are invalid
  * @param {Object} options The options object to be validated
  */
-function validateOptions(options) {
+function validateOptions(options) { // eslint-disable-line complexity
   if ((options.clientId || options.privateKey) && options.apiKey) {
     throw new Error('Can only specify credentials or API key');
   }
@@ -31,6 +32,10 @@ function validateOptions(options) {
 
   if (!options.apiKey && !(options.clientId && options.privateKey)) {
     throw new Error('Must either provide credentials or API key');
+  }
+
+  if (options.queriesPerSecond <= 0 || options.queriesPerSecond > 50) {
+    throw new Error('Requests per second must be > 0 and <= 50');
   }
 }
 
@@ -48,7 +53,7 @@ export default class Geocoder {
     options = Object.assign({}, defaults, options);
     validateOptions(options);
 
-    this.timeBetweenRequests = 20;
+    this.timeBetweenRequests = Math.ceil(1000 / options.queriesPerSecond);
     this.maxRequests = 20;
     this.lastGeocode = new Date();
     this.currentRequests = 0;

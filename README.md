@@ -127,7 +127,8 @@ new GeoBatch({
   privateKey: 'myPrivateKey',
   apiKey: 'myApiKey',
   cacheFile: 'myGeocache.db',
-  accessor: myAccessorFunction
+  accessor: myAccessorFunction,
+  queriesPerSecond: 50
 });
 ```
 
@@ -158,6 +159,11 @@ function(address) {
   return address;
 }
 ```
+
+#### `queriesPerSecond`
+
+Type `Number`. The maximum number of requests per second. This number must be between 1 and 50 (inclusive).
+Default is `50`.
 
 ## Contribution
 

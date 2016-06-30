@@ -4,6 +4,7 @@ import intoStream from 'into-stream';
 import StandardGeocoder from './geocoder';
 import StandardGeocodeStream from './geocode-stream';
 import stream from 'stream';
+import defaults from './defaults';
 
 /**
  * GeoBatch instance
@@ -22,18 +23,26 @@ export default class GeoBatch {
       clientId = null,
       privateKey = null,
       apiKey = null,
+      queriesPerSecond = defaults.maxQueriesPerSecond,
       accessor = address => address
     } = {
       cacheFile: 'geocache.db',
       clientId: null,
       privateKey: null,
       apiKey: null,
+      queriesPerSecond: defaults.maxQueriesPerSecond,
       accessor: address => address
     },
     Geocoder = StandardGeocoder,
     GeocodeStream = StandardGeocodeStream
   ) {
-    this.geocoder = new Geocoder({cacheFile, clientId, privateKey, apiKey});
+    this.geocoder = new Geocoder({
+      cacheFile,
+      clientId,
+      privateKey,
+      apiKey,
+      queriesPerSecond
+    });
     this.GeocodeStream = GeocodeStream;
     this.accessor = accessor;
   }

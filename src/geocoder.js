@@ -4,11 +4,13 @@ import Cache from './cache';
 import isEmpty from 'amp-is-empty';
 import GoogleGeocoder from './lib/google-geocoder';
 import Errors from './errors';
+import defaults from './defaults';
 
-const defaults = {
+const geocoderDefaults = {
   clientId: null,
   privateKey: null,
-  apiKey: null
+  apiKey: null,
+  queriesPerSecond: defaults.maxQueriesPerSecond
 };
 
 /**
@@ -16,7 +18,7 @@ const defaults = {
  * This function throws an exception if the options are invalid
  * @param {Object} options The options object to be validated
  */
-function validateOptions(options) {
+function validateOptions(options) { // eslint-disable-line complexity
   if ((options.clientId || options.privateKey) && options.apiKey) {
     throw new Error('Can only specify credentials or API key');
   }
@@ -32,6 +34,12 @@ function validateOptions(options) {
   if (!options.apiKey && !(options.clientId && options.privateKey)) {
     throw new Error('Must either provide credentials or API key');
   }
+
+  if (options.queriesPerSecond < defaults.minQueriesPerSecond ||
+    options.queriesPerSecond > defaults.maxQueriesPerSecond
+  ) {
+    throw new Error('Requests per second must be >= 1 and <= 50');
+  }
 }
 
 /**
@@ -45,10 +53,10 @@ export default class Geocoder {
    * @param  {Object} options Geocoder options.
    */
   constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
-    options = Object.assign({}, defaults, options);
+    options = Object.assign({}, geocoderDefaults, options);
     validateOptions(options);
 
-    this.timeBetweenRequests = 20;
+    this.timeBetweenRequests = Math.ceil(1000 / options.queriesPerSecond);
     this.maxRequests = 20;
     this.lastGeocode = new Date();
     this.currentRequests = 0;

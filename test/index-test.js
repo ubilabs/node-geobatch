@@ -17,7 +17,8 @@ describe('Testing GeoBatch', () => {
         cacheFile: 'geocache.db',
         clientId: null,
         privateKey: null,
-        apiKey: null
+        apiKey: null,
+        queriesPerSecond: 50
       },
       options = {clientId: 'a clientID', privateKey: 'a privateKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);
@@ -35,12 +36,31 @@ describe('Testing GeoBatch', () => {
         cacheFile: 'geocache.db',
         clientId: null,
         privateKey: null,
-        apiKey: null
+        apiKey: null,
+        queriesPerSecond: 50
       },
       options = {apiKey: 'an apiKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);
 
     expectedOptions.apiKey = 'an apiKey';
+
+    sinon.assert.calledWith(MockGeoCoder, expectedOptions);
+  });
+
+  it('should accept a number of maximum queries per second', function() {
+    /* eslint-disable no-unused-vars */
+    const MockGeoCoder = sinon.stub(),
+      expectedOptions = {
+        cacheFile: 'geocache.db',
+        clientId: null,
+        privateKey: null,
+        apiKey: null,
+        queriesPerSecond: 25
+      },
+      options = getGeocoderOptions({queriesPerSecond: 25}),
+      geoBatch = new GeoBatch(options, MockGeoCoder);
+
+    expectedOptions.apiKey = options.apiKey;
 
     sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });

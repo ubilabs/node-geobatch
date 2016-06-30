@@ -113,6 +113,46 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }).throw('Can only specify credentials or API key');
   });
 
+  it('should accept a maximum requests per second option', function() {
+    const geocoder = new Geocoder(
+      getGeocoderOptions({queriesPerSecond: 10}),
+      getGeocoderInterface(),
+      MockCache
+    );
+
+    should.exist(geocoder);
+  });
+
+  it('should not accept less than 1 query per second', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
+        getGeocoderOptions({queriesPerSecond: 0.5}),
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Requests per second must be >= 1 and <= 50');
+  });
+
+  it('should not accept negative queries per second', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
+        getGeocoderOptions({queriesPerSecond: -2}),
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Requests per second must be >= 1 and <= 50');
+  });
+
+  it('should not accept less more than 50 queries per second', function() {
+    should(() => {
+      const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
+        getGeocoderOptions({queriesPerSecond: 51}),
+        getGeocoderInterface(),
+        MockCache
+      );
+    }).throw('Requests per second must be >= 1 and <= 50');
+  });
+
   it('should return a promise from the geocodeAddress function', () => {
     const geocodeFunction = getGeocodeFunction({error: 'error'});
 

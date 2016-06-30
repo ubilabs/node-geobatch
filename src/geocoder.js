@@ -4,12 +4,13 @@ import Cache from './cache';
 import isEmpty from 'amp-is-empty';
 import GoogleGeocoder from './lib/google-geocoder';
 import Errors from './errors';
+import defaults from './defaults';
 
-const defaults = {
+const geocoderDefaults = {
   clientId: null,
   privateKey: null,
   apiKey: null,
-  queriesPerSecond: 50
+  queriesPerSecond: defaults.maxQueriesPerSecond
 };
 
 /**
@@ -34,7 +35,9 @@ function validateOptions(options) { // eslint-disable-line complexity
     throw new Error('Must either provide credentials or API key');
   }
 
-  if (options.queriesPerSecond < 1 || options.queriesPerSecond > 50) {
+  if (options.queriesPerSecond < defaults.minQueriesPerSecond ||
+    options.queriesPerSecond > defaults.maxQueriesPerSecond
+  ) {
     throw new Error('Requests per second must be >= 1 and <= 50');
   }
 }
@@ -50,7 +53,7 @@ export default class Geocoder {
    * @param  {Object} options Geocoder options.
    */
   constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
-    options = Object.assign({}, defaults, options);
+    options = Object.assign({}, geocoderDefaults, options);
     validateOptions(options);
 
     this.timeBetweenRequests = Math.ceil(1000 / options.queriesPerSecond);

@@ -1,4 +1,5 @@
 import ParallelTransform from './lib/parallel-transform';
+import defaults from './defaults';
 
 /**
  * A streaming object for the geocode
@@ -14,7 +15,7 @@ export default class GeocodeStream extends ParallelTransform {
    *                             data item directly.
    */
   constructor(geocoder, stats, accessor = address => address) {
-    super(50, {objectMode: true});
+    super(defaults.maxQueriesPerSecond, {objectMode: true});
 
     this.geocoder = geocoder;
     this.stats = stats;

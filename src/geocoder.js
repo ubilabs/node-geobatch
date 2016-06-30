@@ -56,8 +56,9 @@ export default class Geocoder {
     options = Object.assign({}, geocoderDefaults, options);
     validateOptions(options);
 
-    this.qps = options.queriesPerSecond;
+    this.queriesPerSecond = options.queriesPerSecond;
     this.queries = -1;
+    this.queue = [];
 
     this.cache = new GeoCache(options.cacheFile);
     this.geocoder = geocoder.init({
@@ -93,11 +94,9 @@ export default class Geocoder {
 
     if (this.queries === -1) {
       this.startBucket();
-    } else if (this.queries >= this.qps) {
+    } else if (this.queries >= this.queriesPerSecond) {
       // maximum number of queries for this bucket exceeded
-      return setTimeout(() => {
-        this.queueGeocode(address, resolve, reject);
-      }, 100);
+      return this.queue.push([address, resolve, reject]);
     }
 
     this.queries++;
@@ -108,10 +107,23 @@ export default class Geocoder {
    * Reset query count and start a timeout of 1 second for this bucket
    **/
   startBucket() {
-    this.queries = 0;
     setTimeout(() => {
       this.queries = -1;
-    }, 1000);
+      this.drainQueue();
+    }, defaults.bucketDuration);
+
+    this.queries = 0;
+  }
+
+  /**
+   * Geocode the first `queriesPerSecond` items from the queue
+   **/
+  drainQueue() {
+    this.queue
+      .splice(0, this.queriesPerSecond)
+      .forEach(query => {
+        this.queueGeocode(...query);
+      });
   }
 
   /**

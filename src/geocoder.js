@@ -34,8 +34,8 @@ function validateOptions(options) { // eslint-disable-line complexity
     throw new Error('Must either provide credentials or API key');
   }
 
-  if (options.queriesPerSecond <= 0 || options.queriesPerSecond > 50) {
-    throw new Error('Requests per second must be > 0 and <= 50');
+  if (options.queriesPerSecond < 1 || options.queriesPerSecond > 50) {
+    throw new Error('Requests per second must be >= 1 and <= 50');
   }
 }
 

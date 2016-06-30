@@ -94,6 +94,7 @@ export default class Geocoder {
     if (this.queries === -1) {
       this.startBucket();
     } else if (this.queries >= this.qps) {
+      // maximum number of queries for this bucket exceeded
       return setTimeout(() => {
         this.queueGeocode(address, resolve, reject);
       }, 100);
@@ -103,10 +104,13 @@ export default class Geocoder {
     this.startGeocode(address, resolve, reject);
   }
 
+  /**
+   * Reset query count and start a timeout of 1 second for this bucket
+   **/
   startBucket() {
     this.queries = 0;
     setTimeout(() => {
-      this.queriesThisSecond = -1;
+      this.queries = -1;
     }, 1000);
   }
 

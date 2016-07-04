@@ -86,7 +86,7 @@ export default class Geocoder {
    * @param {Function} reject The Promise reject function
    * @return {?} Something to get out
    */
-  queueGeocode(address, resolve, reject) {
+  queueGeocode(address, resolve, reject, retrying = false) {
     const cachedAddress = this.cache.get(address);
     if (cachedAddress) {
       return resolve(cachedAddress);
@@ -96,11 +96,11 @@ export default class Geocoder {
       this.startBucket();
     } else if (this.queries >= this.queriesPerSecond) {
       // maximum number of queries for this bucket exceeded
-      return this.queue.push([address, resolve, reject]);
+      return this.queue.push([address, resolve, reject, retrying]);
     }
 
     this.queries++;
-    this.startGeocode(address, resolve, reject);
+    this.startGeocode(address, resolve, reject, retrying);
   }
 
   /**
@@ -132,7 +132,7 @@ export default class Geocoder {
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
    */
-  startGeocode(address, resolve, reject) {
+  startGeocode(address, resolve, reject, retrying = false) {
     const geoCodeParams = {
       address: address.replace('\'', '')
     };
@@ -146,7 +146,11 @@ export default class Geocoder {
       }
 
       if (response.status === 'OVER_QUERY_LIMIT') {
-        return reject(new Error('Over query limit'));
+        if (retrying) {
+          return reject(new Error('Over query limit'));
+        }
+
+        return this.queueGeocode(address, resolve, reject, true);
       }
 
       if (isEmpty(response.results)) {

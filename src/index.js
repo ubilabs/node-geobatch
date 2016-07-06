@@ -23,6 +23,7 @@ export default class GeoBatch {
       clientId = null,
       privateKey = null,
       apiKey = null,
+      maxRetries = defaults.maxRetries,
       queriesPerSecond = defaults.maxQueriesPerSecond,
       accessor = address => address
     } = {
@@ -30,6 +31,7 @@ export default class GeoBatch {
       clientId: null,
       privateKey: null,
       apiKey: null,
+      maxRetries: defaults.maxRetries,
       queriesPerSecond: defaults.maxQueriesPerSecond,
       accessor: address => address
     },
@@ -41,6 +43,7 @@ export default class GeoBatch {
       clientId,
       privateKey,
       apiKey,
+      maxRetries,
       queriesPerSecond
     });
     this.GeocodeStream = GeocodeStream;

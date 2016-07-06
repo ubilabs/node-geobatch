@@ -10,7 +10,8 @@ const geocoderDefaults = {
   clientId: null,
   privateKey: null,
   apiKey: null,
-  queriesPerSecond: defaults.maxQueriesPerSecond
+  queriesPerSecond: defaults.maxQueriesPerSecond,
+  maxRetries: defaults.maxRetries
 };
 
 /**
@@ -57,6 +58,7 @@ export default class Geocoder {
     validateOptions(options);
 
     this.queriesPerSecond = options.queriesPerSecond;
+    this.maxRetries = options.maxRetries;
     this.queries = -1;
     this.queue = [];
 
@@ -86,7 +88,7 @@ export default class Geocoder {
    * @param {Function} reject The Promise reject function
    * @return {?} Something to get out
    */
-  queueGeocode(address, resolve, reject, retrying = false) {
+  queueGeocode(address, resolve, reject, retries = 0) {
     const cachedAddress = this.cache.get(address);
     if (cachedAddress) {
       return resolve(cachedAddress);
@@ -96,11 +98,11 @@ export default class Geocoder {
       this.startBucket();
     } else if (this.queries >= this.queriesPerSecond) {
       // maximum number of queries for this bucket exceeded
-      return this.queue.push([address, resolve, reject, retrying]);
+      return this.queue.push([address, resolve, reject, retries]);
     }
 
     this.queries++;
-    this.startGeocode(address, resolve, reject, retrying);
+    this.startGeocode(address, resolve, reject, retries);
   }
 
   /**
@@ -132,7 +134,7 @@ export default class Geocoder {
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
    */
-  startGeocode(address, resolve, reject, retrying = false) {
+  startGeocode(address, resolve, reject, retries = 0) {
     const geoCodeParams = {
       address: address.replace('\'', '')
     };
@@ -146,11 +148,11 @@ export default class Geocoder {
       }
 
       if (response.status === 'OVER_QUERY_LIMIT') {
-        if (retrying) {
+        if (retries >= this.maxRetries) {
           return reject(new Error('Over query limit'));
         }
 
-        return this.queueGeocode(address, resolve, reject, true);
+        return this.queueGeocode(address, resolve, reject, retries + 1);
       }
 
       if (isEmpty(response.results)) {

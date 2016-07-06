@@ -76,6 +76,14 @@ const helpers = {
     return new GeocodeStream(mockGeocoder, mockStats);
   },
 
+  /**
+   * Returns a mock ParallelTransform stream
+   * @param {Function} parallelTransform The transformation function
+   * @param {Number}   maxParallel The maximum number of
+                                   parallel transformations
+   * @param {Object}   options ParallelTransform options
+   * @return {Stream} A ParallelTransform stream
+   **/
   getParallelTransformStream: (
     parallelTransform = (data, done) => {
       done(null, data);

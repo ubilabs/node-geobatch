@@ -1,5 +1,5 @@
 export default {
-  maxQueriesPerSecond: 50,
+  maxQueriesPerSecond: 35,
   minQueriesPerSecond: 1,
   bucketDuration: 1000 // ms
 };

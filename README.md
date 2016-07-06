@@ -163,7 +163,7 @@ function(address) {
 #### `queriesPerSecond`
 
 Type `Number`. The maximum number of requests per second. This number must be between 1 and 50 (inclusive).
-Default is `50`.
+Default is `35`.
 
 ## Contribution
 

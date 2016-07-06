@@ -19,7 +19,7 @@ describe('Testing GeoBatch', () => {
         clientId: null,
         privateKey: null,
         apiKey: null,
-        queriesPerSecond: 50
+        queriesPerSecond: 35
       },
       options = {clientId: 'a clientID', privateKey: 'a privateKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);
@@ -38,7 +38,7 @@ describe('Testing GeoBatch', () => {
         clientId: null,
         privateKey: null,
         apiKey: null,
-        queriesPerSecond: 50
+        queriesPerSecond: 35
       },
       options = {apiKey: 'an apiKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);

@@ -47,7 +47,12 @@ const helpers = {
    */
   getGeocoderOptions: opts => {
     const defaultOptions = {
-      apiKey: 'dummy'
+      cacheFile: 'geocache.db',
+      clientId: null,
+      privateKey: null,
+      apiKey: 'dummy',
+      maxRetries: 0,
+      queriesPerSecond: 35
     };
 
     return Object.assign({}, defaultOptions, opts);

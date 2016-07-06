@@ -13,11 +13,6 @@ import cyclist from 'cyclist';
    **/
 export default class ParallelTransform extends stream.Transform {
   constructor(maxParallel = 1, options = {}) {
-    // disallow direct calling of this constructor
-    if (new.target === ParallelTransform) {
-      throw new Error('Cannot construct ParallelTransform instances directly');
-    }
-
     options.highWaterMark = options.highWaterMark || Math.max(maxParallel, 16);
 
     super(options);

@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import GeocodeStream from '../../src/geocode-stream';
+import ParallelTransform from '../../src/lib/parallel-transform';
 
 const helpers = {
   /**
@@ -73,6 +74,25 @@ const helpers = {
       mockGeocoder = GeoCoderInterface.init(),
       mockStats = {};
     return new GeocodeStream(mockGeocoder, mockStats);
+  },
+
+  getParallelTransformStream: (
+    parallelTransform = (data, done) => {
+      done(null, data);
+    },
+    maxParallel = 1,
+    options = {}
+  ) => {
+    class TransformTestClass extends ParallelTransform {
+      constructor() {
+        super(maxParallel, options);
+      }
+    }
+
+    TransformTestClass.prototype // eslint-disable-line no-underscore-dangle
+      ._parallelTransform = parallelTransform;
+
+    return TransformTestClass;
   }
 };
 

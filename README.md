@@ -128,6 +128,7 @@ new GeoBatch({
   apiKey: 'myApiKey',
   cacheFile: 'myGeocache.db',
   accessor: myAccessorFunction,
+  maxRetries: 1,
   queriesPerSecond: 50
 });
 ```
@@ -159,6 +160,11 @@ function(address) {
   return address;
 }
 ```
+
+#### `maxRetries`
+
+Type `Number`. This option defines how often Geobatch will retry geocoding if the query limit was exceeded.
+Default is `0`.
 
 #### `queriesPerSecond`
 

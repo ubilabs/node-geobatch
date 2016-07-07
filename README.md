@@ -169,6 +169,8 @@ Default is `0`.
 #### `queriesPerSecond`
 
 Type `Number`. The maximum number of requests per second. This number must be between 1 and 50 (inclusive).
+Please note that due to varying network latency the maximum value of 50 QPS will result in occasional `OVER_QUERY_LIMIT` errors.
+Use a moderate value (the default is safe), or the `maxRetries` option.
 Default is `35`.
 
 ## Contribution

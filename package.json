@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "amp-is-empty": "^1.0.2",
+    "cyclist": "^1.0.1",
     "flat-file-db": "^0.1.4",
     "googlemaps": "^1.6.0",
     "into-stream": "^2.0.0"

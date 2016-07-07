@@ -51,7 +51,7 @@ describe('Geocode Stream', () => {
         geocoder = GeoCoderInterface.init(),
         geocodeStream = new GeocodeStream(geocoder);
 
-      geocodeStream._transform('test', null, null);
+      geocodeStream._transform('test', null, () => {});
       promise
         .then(() => {
           sinon.assert.calledWith(newGeocodeAddressFunction, 'test');
@@ -102,7 +102,7 @@ describe('Geocode Stream', () => {
         geocoder = GeoCoderInterface.init(),
         geocodeStream = new GeocodeStream(geocoder, null, accessorFunction);
 
-      geocodeStream._transform(mockInput, null, null);
+      geocodeStream._transform(mockInput, null, () => {});
       promise
         .then(() => {
           sinon.assert.calledWith(newGeocodeAddressFunction, mockAddress);

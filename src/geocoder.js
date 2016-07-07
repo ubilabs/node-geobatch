@@ -10,7 +10,8 @@ const geocoderDefaults = {
   clientId: null,
   privateKey: null,
   apiKey: null,
-  queriesPerSecond: defaults.maxQueriesPerSecond
+  queriesPerSecond: defaults.defaultQueriesPerSecond,
+  maxRetries: defaults.maxRetries
 };
 
 /**
@@ -56,10 +57,10 @@ export default class Geocoder {
     options = Object.assign({}, geocoderDefaults, options);
     validateOptions(options);
 
-    this.timeBetweenRequests = Math.ceil(1000 / options.queriesPerSecond);
-    this.maxRequests = 20;
-    this.lastGeocode = new Date();
-    this.currentRequests = 0;
+    this.queriesPerSecond = options.queriesPerSecond;
+    this.maxRetries = options.maxRetries;
+    this.queries = -1;
+    this.queue = [];
 
     this.cache = new GeoCache(options.cacheFile);
     this.geocoder = geocoder.init({
@@ -76,8 +77,55 @@ export default class Geocoder {
    */
   geocodeAddress(address) {
     return new Promise((resolve, reject) => {
-      this.startGeocode(address, resolve, reject);
+      this.queueGeocode(address, resolve, reject);
     });
+  }
+
+  /**
+   * Add a geocoding operation to the queue of geocodes
+   * @param {String} address The address to geocode
+   * @param {Function} resolve The Promise resolve function
+   * @param {Function} reject The Promise reject function
+   * @return {?} Something to get out
+   */
+  queueGeocode(address, resolve, reject, retries = 0) {
+    const cachedAddress = this.cache.get(address);
+    if (cachedAddress) {
+      return resolve(cachedAddress);
+    }
+
+    if (this.queries === -1) {
+      this.startBucket();
+    } else if (this.queries >= this.queriesPerSecond) {
+      // maximum number of queries for this bucket exceeded
+      return this.queue.push([address, resolve, reject, retries]);
+    }
+
+    this.queries++;
+    this.startGeocode(address, resolve, reject, retries);
+  }
+
+  /**
+   * Reset query count and start a timeout of 1 second for this bucket
+   **/
+  startBucket() {
+    setTimeout(() => {
+      this.queries = -1;
+      this.drainQueue();
+    }, defaults.bucketDuration);
+
+    this.queries = 0;
+  }
+
+  /**
+   * Geocode the first `queriesPerSecond` items from the queue
+   **/
+  drainQueue() {
+    this.queue
+      .splice(0, this.queriesPerSecond)
+      .forEach(query => {
+        this.queueGeocode(...query);
+      });
   }
 
   /**
@@ -85,35 +133,13 @@ export default class Geocoder {
    * @param {String} address The address to geocode
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
-   * @return {?} Something to get out
    */
-  startGeocode(address, resolve, reject) {
-    const cachedAddress = this.cache.get(address);
-    if (cachedAddress) {
-      return resolve(cachedAddress);
-    }
-
-    let now = new Date();
-
-    if (
-      this.currentRequests >= this.maxRequests ||
-      now - this.lastGeocode <= this.timeBetweenRequests
-    ) {
-      return setTimeout(() => {
-        this.startGeocode(address, resolve, reject);
-      }, this.timeBetweenRequests);
-    }
-
-    this.currentRequests++;
-    this.lastGeocode = now;
-
+  startGeocode(address, resolve, reject, retries = 0) {
     const geoCodeParams = {
       address: address.replace('\'', '')
     };
 
     this.geocoder.geocode(geoCodeParams, (error, response) => {
-      this.currentRequests--;
-
       if (error) {
         const errorMessage = Errors[error.code] ||
           'Google Maps API error: ' + error.code;
@@ -122,7 +148,11 @@ export default class Geocoder {
       }
 
       if (response.status === 'OVER_QUERY_LIMIT') {
-        return reject(new Error('Over query limit'));
+        if (retries >= this.maxRetries) {
+          return reject(new Error('Over query limit'));
+        }
+
+        return this.queueGeocode(address, resolve, reject, retries + 1);
       }
 
       if (isEmpty(response.results)) {

@@ -8,18 +8,13 @@ import streamAssert from 'stream-assert';
 
 import GeoBatch from '../src/index.js';
 import {getGeocoderOptions} from './lib/helpers.js';
+import ParallelTransform from '../src/lib/parallel-transform';
 
 describe('Testing GeoBatch', () => {
   it('should accept a clientId and a privateKey', function() {
     /* eslint-disable no-unused-vars */
     const MockGeoCoder = sinon.stub(),
-      expectedOptions = {
-        cacheFile: 'geocache.db',
-        clientId: null,
-        privateKey: null,
-        apiKey: null,
-        queriesPerSecond: 50
-      },
+      expectedOptions = getGeocoderOptions({apiKey: null}),
       options = {clientId: 'a clientID', privateKey: 'a privateKey'},
       geoBatch = new GeoBatch(options, MockGeoCoder);
 
@@ -32,17 +27,9 @@ describe('Testing GeoBatch', () => {
   it('should accept an apiKey', function() {
     /* eslint-disable no-unused-vars */
     const MockGeoCoder = sinon.stub(),
-      expectedOptions = {
-        cacheFile: 'geocache.db',
-        clientId: null,
-        privateKey: null,
-        apiKey: null,
-        queriesPerSecond: 50
-      },
-      options = {apiKey: 'an apiKey'},
+      options = getGeocoderOptions({apiKey: 'dummy'}),
+      expectedOptions = options,
       geoBatch = new GeoBatch(options, MockGeoCoder);
-
-    expectedOptions.apiKey = 'an apiKey';
 
     sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });
@@ -50,17 +37,19 @@ describe('Testing GeoBatch', () => {
   it('should accept a number of maximum queries per second', function() {
     /* eslint-disable no-unused-vars */
     const MockGeoCoder = sinon.stub(),
-      expectedOptions = {
-        cacheFile: 'geocache.db',
-        clientId: null,
-        privateKey: null,
-        apiKey: null,
-        queriesPerSecond: 25
-      },
       options = getGeocoderOptions({queriesPerSecond: 25}),
+      expectedOptions = options,
       geoBatch = new GeoBatch(options, MockGeoCoder);
 
-    expectedOptions.apiKey = options.apiKey;
+    sinon.assert.calledWith(MockGeoCoder, expectedOptions);
+  });
+
+  it('should accept a number of maximum retries', function() {
+    /* eslint-disable no-unused-vars */
+    const MockGeoCoder = sinon.stub(),
+      options = getGeocoderOptions({maxRetries: 3}),
+      expectedOptions = options,
+      geoBatch = new GeoBatch(options, MockGeoCoder);
 
     sinon.assert.calledWith(MockGeoCoder, expectedOptions);
   });
@@ -167,15 +156,14 @@ describe('Testing GeoBatch', () => {
     const mockAccessor = sinon.stub();
 
     // Create a mock geocode-stream class that passes elements unchanged.
-    class mockGeocodeStream extends stream.Transform {
+    class mockGeocodeStream extends ParallelTransform {
       constructor(geocoder, stats, accessor) {
-        super({objectMode: true});
+        super(1, {objectMode: true});
         should(accessor).equal(mockAccessor);
         done();
       }
-      _transform(item, encoding, done) { // eslint-disable-line
-        this.push(item);
-        done();
+      _parallelTransform(item, done) { // eslint-disable-line no-shadow
+        done(null, item);
       }
     }
     const mockGeoCoder = sinon.stub(),

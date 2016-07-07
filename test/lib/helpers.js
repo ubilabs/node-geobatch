@@ -1,5 +1,6 @@
 import sinon from 'sinon';
 import GeocodeStream from '../../src/geocode-stream';
+import ParallelTransform from '../../src/lib/parallel-transform';
 
 const helpers = {
   /**
@@ -47,7 +48,12 @@ const helpers = {
    */
   getGeocoderOptions: opts => {
     const defaultOptions = {
-      apiKey: 'dummy'
+      cacheFile: 'geocache.db',
+      clientId: null,
+      privateKey: null,
+      apiKey: 'dummy',
+      maxRetries: 0,
+      queriesPerSecond: 35
     };
 
     return Object.assign({}, defaultOptions, opts);
@@ -68,6 +74,33 @@ const helpers = {
       mockGeocoder = GeoCoderInterface.init(),
       mockStats = {};
     return new GeocodeStream(mockGeocoder, mockStats);
+  },
+
+  /**
+   * Returns a mock ParallelTransform stream
+   * @param {Function} parallelTransform The transformation function
+   * @param {Number}   maxParallel The maximum number of
+                                   parallel transformations
+   * @param {Object}   options ParallelTransform options
+   * @return {Stream} A ParallelTransform stream
+   **/
+  getParallelTransformStream: (
+    parallelTransform = (data, done) => {
+      done(null, data);
+    },
+    maxParallel = 1,
+    options = {}
+  ) => {
+    class TransformTestClass extends ParallelTransform {
+      constructor() {
+        super(maxParallel, options);
+      }
+    }
+
+    TransformTestClass.prototype // eslint-disable-line no-underscore-dangle
+      ._parallelTransform = parallelTransform;
+
+    return TransformTestClass;
   }
 };
 

@@ -123,6 +123,16 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     should.exist(geocoder);
   });
 
+  it('should accept a maximum number of retries option', function() {
+    const geocoder = new Geocoder(
+      getGeocoderOptions({maxRetries: 3}),
+      getGeocoderInterface(),
+      MockCache
+    );
+
+    should.exist(geocoder);
+  });
+
   it('should not accept less than 1 query per second', function() {
     should(() => {
       const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
@@ -143,7 +153,7 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
     }).throw('Requests per second must be >= 1 and <= 50');
   });
 
-  it('should not accept less more than 50 queries per second', function() {
+  it('should not accept more than 50 queries per second', function() {
     should(() => {
       const geocoder = new Geocoder( // eslint-disable-line no-unused-vars
         getGeocoderOptions({queriesPerSecond: 51}),
@@ -341,5 +351,46 @@ describe('Testing geocoder', function() { // eslint-disable-line max-statements
       should(error.message).equal('No results found');
       done();
     });
+  });
+
+  it('should return an error when over query limit', function(done) {
+    const mockAddress = 'Hamburg',
+      geocodeFunction = getGeocodeFunction({
+        results: ['Hamburg'],
+        status: 'OVER_QUERY_LIMIT'
+      }),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        getGeocoderOptions(),
+        geoCoderInterface,
+        MockCache);
+
+    geocoder.geocodeAddress(mockAddress)
+      .catch(error => {
+        should(error).be.an.Error;
+        should(error.message).equal('Over query limit');
+      })
+      .then(done, done);
+  });
+
+  it('should retry `maxRetries` times', function(done) {
+    const mockAddress = 'Hamburg',
+      geocodeFunction = getGeocodeFunction({
+        results: ['Hamburg'],
+        status: 'OVER_QUERY_LIMIT'
+      }),
+      geoCoderInterface = getGeocoderInterface(geocodeFunction),
+      geocoder = new Geocoder(
+        getGeocoderOptions({
+          maxRetries: 2
+        }),
+        geoCoderInterface,
+        MockCache);
+
+    geocoder.geocodeAddress(mockAddress)
+      .catch(() => {
+        should(geocodeFunction.calledThrice).equal(true);
+      })
+      .then(done, done);
   });
 });

@@ -18,7 +18,6 @@
     "forOf": true,
     "generators": true,
     "modules": true,
-    "newTarget": true,
     "objectLiteralComputedProperties": true,
     "objectLiteralDuplicateProperties": true,
     "objectLiteralShorthandMethods": true,

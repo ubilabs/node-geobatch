@@ -23,14 +23,16 @@ export default class GeoBatch {
       clientId = null,
       privateKey = null,
       apiKey = null,
-      queriesPerSecond = defaults.maxQueriesPerSecond,
+      maxRetries = defaults.maxRetries,
+      queriesPerSecond = defaults.defaultQueriesPerSecond,
       accessor = address => address
     } = {
       cacheFile: 'geocache.db',
       clientId: null,
       privateKey: null,
       apiKey: null,
-      queriesPerSecond: defaults.maxQueriesPerSecond,
+      maxRetries: defaults.maxRetries,
+      queriesPerSecond: defaults.defaultQueriesPerSecond,
       accessor: address => address
     },
     Geocoder = StandardGeocoder,
@@ -41,6 +43,7 @@ export default class GeoBatch {
       clientId,
       privateKey,
       apiKey,
+      maxRetries,
       queriesPerSecond
     });
     this.GeocodeStream = GeocodeStream;

@@ -24,7 +24,7 @@ export default class GeoBatch {
       privateKey = null,
       apiKey = null,
       maxRetries = defaults.maxRetries,
-      queriesPerSecond = defaults.maxQueriesPerSecond,
+      queriesPerSecond = defaults.defaultQueriesPerSecond,
       accessor = address => address
     } = {
       cacheFile: 'geocache.db',
@@ -32,7 +32,7 @@ export default class GeoBatch {
       privateKey: null,
       apiKey: null,
       maxRetries: defaults.maxRetries,
-      queriesPerSecond: defaults.maxQueriesPerSecond,
+      queriesPerSecond: defaults.defaultQueriesPerSecond,
       accessor: address => address
     },
     Geocoder = StandardGeocoder,

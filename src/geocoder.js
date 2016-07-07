@@ -10,7 +10,7 @@ const geocoderDefaults = {
   clientId: null,
   privateKey: null,
   apiKey: null,
-  queriesPerSecond: defaults.maxQueriesPerSecond,
+  queriesPerSecond: defaults.defaultQueriesPerSecond,
   maxRetries: defaults.maxRetries
 };
 

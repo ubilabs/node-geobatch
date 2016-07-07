@@ -1,3 +1,16 @@
+## 1.4.0 (2016-07-07)
+
+
+#### Features
+
+* **geobatch:**
+  * add `maxRetries` option ([3df0a6ab](https://github.com/ubilabs/node-geobatch/commit/3df0a6abaa703e0135b76294b56c2006ad8ae534))
+  * add an option to specify QPS ([1782a232](https://github.com/ubilabs/node-geobatch/commit/1782a232388330370a4fd01695e191215a1d36b6))
+* **geocoder:**
+  * retry once after running into query limit ([d776d830](https://github.com/ubilabs/node-geobatch/commit/d776d83000258e8a50811b73ac1099a449ff129d))
+  * implement parallel processing to leverage full QPS ([bd97c519](https://github.com/ubilabs/node-geobatch/commit/bd97c5195fb20f7cf76128ff50e48f535046bb82))
+
+
 ## 1.3.0 (2016-06-28)
 
 

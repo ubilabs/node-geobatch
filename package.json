@@ -50,7 +50,7 @@
     "eslint": "^3.0.1",
     "lie": "^3.0.1",
     "mocha": "^2.5.0",
-    "release-it": "0.0.15",
+    "release-it": "^2.4.0",
     "should": "^9.0.0",
     "sinon": "^1.17.1",
     "stream-assert": "^2.0.3"

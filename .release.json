@@ -9,8 +9,9 @@
   "tagName": "%s",
   "tagAnnotation": "Release %s",
   "buildCommand": "npm run changelog",
-  "distRepo": false,
-  "private": false,
-  "publish": true,
-  "publishPath": "."
+  "npm": {
+    "private": false,
+    "publish": true,
+    "publishPath": "."
+  }
 }

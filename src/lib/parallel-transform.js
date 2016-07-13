@@ -77,6 +77,7 @@ export default class ParallelTransform extends stream.Transform {
 
     // otherwise wait until a transformation finished
     this.ondrain = done;
+    return null;
   }
 
   /**

@@ -51,7 +51,9 @@ function validateOptions(options) { // eslint-disable-line complexity
 export default class Geocoder {
   /**
    * Constructs a geocoder.
-   * @param  {Object} options Geocoder options.
+   * @param {Object} options Geocoder options.
+   * @param {Object} geocoder The Google geocoding API class
+   * @param {Object} GeoCache The Cache class
    */
   constructor(options = {}, geocoder = GoogleGeocoder, GeoCache = Cache) {
     options = Object.assign({}, geocoderDefaults, options);
@@ -86,6 +88,7 @@ export default class Geocoder {
    * @param {String} address The address to geocode
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
+   * @param {Number} retries The number of times this query has been tried
    * @return {?} Something to get out
    */
   queueGeocode(address, resolve, reject, retries = 0) {
@@ -103,6 +106,7 @@ export default class Geocoder {
 
     this.queries++;
     this.startGeocode(address, resolve, reject, retries);
+    return null;
   }
 
   /**
@@ -133,6 +137,7 @@ export default class Geocoder {
    * @param {String} address The address to geocode
    * @param {Function} resolve The Promise resolve function
    * @param {Function} reject The Promise reject function
+   * @param {Number} retries The number of times this query has been tried
    */
   startGeocode(address, resolve, reject, retries = 0) {
     const geoCodeParams = {

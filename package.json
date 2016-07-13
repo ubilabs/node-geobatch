@@ -2,6 +2,7 @@
   "name": "geobatch",
   "description": "Batch geocode addresses from multiple sources.",
   "version": "1.4.1",
+  "license": "MIT",
   "author": {
     "name": "Robert Katzki",
     "email": "katzki@ubilabs.net",

@@ -47,7 +47,7 @@
     "babel": "^5.8.23",
     "babel-core": "^5.8.25",
     "conventional-changelog-cli": "^1.2.0",
-    "eslint": "^3.0.1",
+    "eslint": "^2.13.1",
     "lie": "^3.0.1",
     "mocha": "^2.5.0",
     "release-it": "^2.4.0",

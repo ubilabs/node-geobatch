@@ -25,7 +25,9 @@ const helpers = {
    * Returns a geocoder interface. The init function returns a geocoder that
    * exposes a geocode function.
    * @param  {Function} geocodeFunction The geocode function to be exposed.
-   * @return {Object}                 A geocoder interface object.
+   * @param  {Function} geocodeAddressFunction The geocodeAddress function
+                                               to be exposed
+   * @return {Object}                   A geocoder interface object.
    */
   getGeocoderInterface: (
     geocodeFunction = () => {},

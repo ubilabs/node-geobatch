@@ -10,7 +10,7 @@ export default class GoogleGeocoder {
 
   /**
    * Inits a google maps API instance with give clientID and privateKey.
-   * @param  {Object}             Config Object
+   * @param  {Object} options     Config Object
    * @return {Object}             Instance of google maps API
    */
   static init(options = {}) {

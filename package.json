@@ -29,7 +29,7 @@
     "prepublish": "npm run lint && npm run build",
     "pretest": "npm run lint",
     "test": "mocha --compilers js:babel-core/register",
-    "generatechangelog": "conventional-changelog-generator",
+    "generatechangelog": "conventional-changelog -i CHANGELOG.md -s -p angular",
     "commitchangelog": "git add CHANGELOG.md && git commit -m \"chore(changelog): new version\" && git push origin master",
     "changelog": "npm run generatechangelog && git reset package.json && npm run commitchangelog && git add package.json",
     "release": "git reset && release-it",
@@ -38,21 +38,19 @@
   "dependencies": {
     "amp-is-empty": "^1.0.2",
     "cyclist": "^1.0.1",
-    "flat-file-db": "^0.1.4",
+    "flat-file-db": "^1.0.0",
     "googlemaps": "^1.6.0",
     "into-stream": "^2.0.0"
   },
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-core": "^5.8.25",
-    "conventional-changelog-generator": "0.0.3",
-    "eslint": "^1.6.0",
-    "into-stream": "^2.0.0",
+    "conventional-changelog-cli": "^1.2.0",
+    "eslint": "^3.0.1",
     "lie": "^3.0.1",
-    "mocha": "2.1.0",
+    "mocha": "^2.5.0",
     "release-it": "0.0.15",
-    "should": "^7.1.0",
-    "should-promised": "^0.1.0",
+    "should": "^9.0.0",
     "sinon": "^1.17.1",
     "stream-assert": "^2.0.3"
   }

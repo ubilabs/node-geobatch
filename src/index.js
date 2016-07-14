@@ -48,6 +48,7 @@ export default class GeoBatch {
     });
     this.GeocodeStream = GeocodeStream;
     this.accessor = accessor;
+    this.queriesPerSecond = queriesPerSecond;
   }
 
   /**
@@ -80,6 +81,7 @@ export default class GeoBatch {
   geocodeStream(inputStream, stats = {current: 0}) {
     const geocodeStream = new this.GeocodeStream(
       this.geocoder,
+      this.queriesPerSecond,
       stats,
       this.accessor
     );

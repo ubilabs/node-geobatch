@@ -6,6 +6,7 @@ import stream from 'stream';
 import intoStream from 'into-stream';
 import streamAssert from 'stream-assert';
 import Promise from 'lie';
+import defaults from '../src/defaults';
 
 import GeocodeStream from '../src/geocode-stream';
 import {getGeocodeStream, getGeocoderInterface} from './lib/helpers';
@@ -29,15 +30,22 @@ describe('Geocode Stream', () => {
 
   it('should take stats', () => {
     const mockStats = 'some stats',
-      geocodeStream = new GeocodeStream(null, mockStats);
+      geocodeStream = new GeocodeStream(null,
+        defaults.defaultQueriesPerSecond,
+        mockStats
+      );
     should(geocodeStream.stats).be.equal(mockStats);
   });
 
   it('should take an accessor function', function() {
-    const mockAcessor = sinon.stub(),
-      geocodeStream = new GeocodeStream(null, null, mockAcessor);
+    const mockAccessor = sinon.stub(),
+      geocodeStream = new GeocodeStream(null,
+        defaults.defaultQueriesPerSecond,
+        null,
+        mockAccessor
+      );
 
-    should(geocodeStream.accessor).equal(mockAcessor);
+    should(geocodeStream.accessor).equal(mockAccessor);
   });
 
   describe('_transform should', () => {
@@ -100,7 +108,11 @@ describe('Geocode Stream', () => {
           newGeocodeAddressFunction
         ),
         geocoder = GeoCoderInterface.init(),
-        geocodeStream = new GeocodeStream(geocoder, null, accessorFunction);
+        geocodeStream = new GeocodeStream(geocoder,
+          defaults.defaultQueriesPerSecond,
+          null,
+          accessorFunction
+        );
 
       geocodeStream._transform(mockInput, null, () => {});
       promise

@@ -38,14 +38,14 @@ describe('Geocode Stream', () => {
   });
 
   it('should take an accessor function', function() {
-    const mockAcessor = sinon.stub(),
+    const mockAccessor = sinon.stub(),
       geocodeStream = new GeocodeStream(null,
         defaults.defaultQueriesPerSecond,
         null,
-        mockAcessor
+        mockAccessor
       );
 
-    should(geocodeStream.accessor).equal(mockAcessor);
+    should(geocodeStream.accessor).equal(mockAccessor);
   });
 
   describe('_transform should', () => {

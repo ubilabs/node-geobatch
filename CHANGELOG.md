@@ -7,17 +7,6 @@
 * **geocode-stream:** fix a bug with low QPS limits ([48fe3fd](https://github.com/ubilabs/node-geobatch/commit/48fe3fd))
 
 
-
-<a name="1.4.2"></a>
-## [1.4.2](https://github.com/ubilabs/node-geobatch/compare/1.4.1...v1.4.2) (2016-07-14)
-
-
-### Bug Fixes
-
-* **geocode-stream:** fix a bug with low QPS limits ([48fe3fd](https://github.com/ubilabs/node-geobatch/commit/48fe3fd))
-
-
-
 ### 1.4.1 (2016-07-07)
 
 

@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import GeocodeStream from '../../src/geocode-stream';
 import ParallelTransform from '../../src/lib/parallel-transform';
+import defaults from '../../src/defaults';
 
 const helpers = {
   /**
@@ -55,7 +56,7 @@ const helpers = {
       privateKey: null,
       apiKey: 'dummy',
       maxRetries: 0,
-      queriesPerSecond: 35
+      queriesPerSecond: defaults.defaultQueriesPerSecond
     };
 
     return Object.assign({}, defaultOptions, opts);
@@ -65,9 +66,13 @@ const helpers = {
    * Returns a mock geocoderStream.
    * @param  {Promise} geocoderPromise The geocode promise returned by the
    *                                   geocoder.
+   * @param  {Number} queriesPerSecond The queries per second
    * @return {Stream} A mock geocoder stream.-
    */
-  getGeocodeStream: geocoderPromise => {
+  getGeocodeStream: (
+    geocoderPromise,
+    queriesPerSecond = defaults.defaultQueriesPerSecond
+  ) => {
     const mockGeocodeAddressFunction = () => geocoderPromise,
       GeoCoderInterface = helpers.getGeocoderInterface(
         null,
@@ -75,7 +80,7 @@ const helpers = {
       ),
       mockGeocoder = GeoCoderInterface.init(),
       mockStats = {};
-    return new GeocodeStream(mockGeocoder, mockStats);
+    return new GeocodeStream(mockGeocoder, queriesPerSecond, mockStats);
   },
 
   /**

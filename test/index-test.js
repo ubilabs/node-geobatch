@@ -157,8 +157,8 @@ describe('Testing GeoBatch', () => {
 
     // Create a mock geocode-stream class that passes elements unchanged.
     class mockGeocodeStream extends ParallelTransform {
-      constructor(geocoder, stats, accessor) {
-        super(1, {objectMode: true});
+      constructor(geocoder, queriesPerSecond, stats, accessor) {
+        super(queriesPerSecond, {objectMode: true});
         should(accessor).equal(mockAccessor);
         done();
       }

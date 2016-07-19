@@ -110,7 +110,7 @@ describe('Geocode Stream', () => {
         geocoder = GeoCoderInterface.init(),
         geocodeStream = new GeocodeStream(geocoder,
           defaults.defaultQueriesPerSecond,
-          null,
+          {},
           accessorFunction
         );
 

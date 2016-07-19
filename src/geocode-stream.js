@@ -16,7 +16,7 @@ export default class GeocodeStream extends ParallelTransform {
    */
   constructor(geocoder,
     queriesPerSecond,
-    stats,
+    stats = {current: 0},
     accessor = address => address
   ) {
     super(queriesPerSecond, {objectMode: true});
@@ -32,17 +32,16 @@ export default class GeocodeStream extends ParallelTransform {
    * @param {Function} done The done callback function
    */
   _parallelTransform(input, done) { // eslint-disable-line
+    const data = this.getMetaInfo(input);
+
     this.geocoder.geocodeAddress(this.accessor(input))
       .then(results => {
-        let data = this.getMetaInfo(input);
         data.result = results[0];
         data.results = results;
         data.location = results[0].geometry.location;
         done(null, data);
       })
       .catch(error => {
-        let data = this.getMetaInfo(input);
-
         data.error = error.message;
         done(null, data);
       });

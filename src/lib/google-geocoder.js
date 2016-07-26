@@ -1,8 +1,8 @@
 import GoogleMapsAPI from 'googlemaps';
 
 const defaults = {
-  clientId: null,
-  privateKey: null,
+  google_client_id: null, // eslint-disable-line camelcase
+  google_private_key: null, // eslint-disable-line camelcase
   key: null
 };
 

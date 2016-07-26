@@ -66,8 +66,8 @@ export default class Geocoder {
 
     this.cache = new GeoCache(options.cacheFile);
     this.geocoder = geocoder.init({
-      clientId: options.clientId,
-      privateKey: options.privateKey,
+      google_client_id: options.clientId, // eslint-disable-line camelcase
+      google_private_key: options.privateKey, // eslint-disable-line camelcase
       key: options.apiKey
     });
   }

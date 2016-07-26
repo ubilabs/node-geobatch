@@ -1,3 +1,14 @@
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/ubilabs/node-geobatch/compare/1.4.2...v1.4.3) (2016-07-26)
+
+
+### Bug Fixes
+
+* **geocode-stream:** ensure sequential 'current' field ([7be819d](https://github.com/ubilabs/node-geobatch/commit/7be819d))
+* **geocoder:** use correct client ID / private key parameter ([2d72860](https://github.com/ubilabs/node-geobatch/commit/2d72860))
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/ubilabs/node-geobatch/compare/1.4.1...v1.4.2) (2016-07-14)
 
